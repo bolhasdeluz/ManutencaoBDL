@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<title>Seed — Bolhas de Luz</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fff5f7;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.box{background:#fff;border:1px solid rgba(196,57,107,.15);border-top:3px solid #c4396b;border-radius:12px;padding:32px;width:420px;max-width:100%}
+h1{font-family:'Cinzel',serif;font-size:1.1rem;color:#8a1a40;margin-bottom:8px}
+p{font-size:13px;color:#8a5060;margin-bottom:20px;line-height:1.5}
+.log{background:#f8f8f8;border:1px solid #eee;border-radius:8px;padding:14px;font-size:12px;font-family:monospace;height:200px;overflow-y:auto;margin-bottom:16px;color:#333}
+.btn{width:100%;padding:12px;background:#c4396b;color:#fff;border:none;border-radius:8px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.1em;font-weight:700;cursor:pointer;transition:background .2s}
+.btn:hover{background:#e8688a}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.done{color:#2d6a4f;font-weight:600}
+.err{color:#b84040}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>🌱 Seed — Dados Retroativos</h1>
+  <p>Este script popula o Firebase com os lançamentos de Janeiro a Junho de 2026. <strong>Execute apenas uma vez.</strong> Feche a página após concluir.</p>
+  <div class="log" id="log">Aguardando…</div>
+  <button class="btn" id="btn" onclick="runSeed()">Iniciar seed</button>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const FB = {
+  apiKey:"__FIREBASE_API_KEY__",
+  authDomain:"__FIREBASE_AUTH_DOMAIN__",
+  projectId:"__FIREBASE_PROJECT_ID__",
+  storageBucket:"__FIREBASE_STORAGE_BUCKET__",
+  messagingSenderId:"__FIREBASE_MESSAGING_SENDER_ID__",
+  appId:"__FIREBASE_APP_ID__"
+};
+const app = initializeApp(FB);
+const db = getFirestore(app);
+
+const DADOS = [
+  // Janeiro 2026
+  {desc:'Claro NXT (Internet)',       val:106.28, tipo:'s', mes:'2026-01', data:'2026-01-31'},
+  {desc:'CEEE-D (Energia Elétrica)', val:52.54,  tipo:'s', mes:'2026-01', data:'2026-01-31'},
+  {desc:'LM Segurança',              val:707.50, tipo:'s', mes:'2026-01', data:'2026-01-31'},
+  {desc:'LM Segurança — Adicional',  val:200.00, tipo:'s', mes:'2026-01', data:'2026-01-31'},
+  {desc:'DMAE (Água/Esgoto)',        val:39.60,  tipo:'s', mes:'2026-01', data:'2026-01-31'},
+  {desc:'Sônica e Marco',            val:270.00, tipo:'s', mes:'2026-01', data:'2026-01-31'},
+  // Fevereiro 2026
+  {desc:'Claro NXT (Internet)',       val:105.00, tipo:'s', mes:'2026-02', data:'2026-02-28'},
+  {desc:'CEEE-D (Energia Elétrica)', val:108.54, tipo:'s', mes:'2026-02', data:'2026-02-28'},
+  {desc:'LM Segurança',              val:707.50, tipo:'s', mes:'2026-02', data:'2026-02-28'},
+  {desc:'LM Segurança — Adicional',  val:200.00, tipo:'s', mes:'2026-02', data:'2026-02-28'},
+  {desc:'DMAE (Água/Esgoto)',        val:35.00,  tipo:'s', mes:'2026-02', data:'2026-02-28'},
+  {desc:'Sônica e Marco',            val:270.00, tipo:'s', mes:'2026-02', data:'2026-02-28'},
+  // Março 2026
+  {desc:'Claro NXT (Internet)',       val:105.00, tipo:'s', mes:'2026-03', data:'2026-03-31'},
+  {desc:'CEEE-D (Energia Elétrica)', val:93.16,  tipo:'s', mes:'2026-03', data:'2026-03-31'},
+  {desc:'LM Segurança',              val:707.50, tipo:'s', mes:'2026-03', data:'2026-03-31'},
+  {desc:'LM Segurança — Adicional',  val:200.00, tipo:'s', mes:'2026-03', data:'2026-03-31'},
+  {desc:'DMAE (Água/Esgoto)',        val:39.60,  tipo:'s', mes:'2026-03', data:'2026-03-31'},
+  {desc:'Sônica e Marco',            val:670.00, tipo:'s', mes:'2026-03', data:'2026-03-31'},
+  // Abril 2026
+  {desc:'Claro NXT (Internet)',       val:106.28, tipo:'s', mes:'2026-04', data:'2026-04-30'},
+  {desc:'CEEE-D (Energia Elétrica)', val:52.54,  tipo:'s', mes:'2026-04', data:'2026-04-30'},
+  {desc:'LM Segurança',              val:200.00, tipo:'s', mes:'2026-04', data:'2026-04-30'},
+  {desc:'LM Segurança — Adicional',  val:200.00, tipo:'s', mes:'2026-04', data:'2026-04-30'},
+  {desc:'DMAE (Água/Esgoto)',        val:39.60,  tipo:'s', mes:'2026-04', data:'2026-04-30'},
+  {desc:'Sônica e Marco',            val:670.00, tipo:'s', mes:'2026-04', data:'2026-04-30'},
+  {desc:'Prefeitura Porto Alegre',   val:57.56,  tipo:'s', mes:'2026-04', data:'2026-04-30'},
+  // Maio 2026
+  {desc:'Claro NXT (Internet)',       val:105.00, tipo:'s', mes:'2026-05', data:'2026-05-13'},
+  {desc:'CEEE-D (Energia Elétrica)', val:108.54, tipo:'s', mes:'2026-05', data:'2026-05-13'},
+  {desc:'LM Segurança',              val:723.75, tipo:'s', mes:'2026-05', data:'2026-05-13'},
+  {desc:'LM Segurança — Adicional',  val:200.00, tipo:'s', mes:'2026-05', data:'2026-05-13'},
+  {desc:'DMAE (Água/Esgoto)',        val:35.00,  tipo:'s', mes:'2026-05', data:'2026-05-13'},
+  {desc:'Sônica e Marco',            val:1000.00,tipo:'s', mes:'2026-05', data:'2026-05-13'},
+  {desc:'Prefeitura Porto Alegre',   val:58.13,  tipo:'s', mes:'2026-05', data:'2026-05-13'},
+  // Junho 2026 (provisório)
+  {desc:'Claro NXT (Internet)',       val:105.00, tipo:'s', mes:'2026-06', data:'2026-06-13'},
+  {desc:'CEEE-D (Energia Elétrica)', val:108.54, tipo:'s', mes:'2026-06', data:'2026-06-13'},
+  {desc:'LM Segurança',              val:150.00, tipo:'s', mes:'2026-06', data:'2026-06-13'},
+  {desc:'LM Segurança — Adicional',  val:200.00, tipo:'s', mes:'2026-06', data:'2026-06-13'},
+  {desc:'DMAE (Água/Esgoto)',        val:35.00,  tipo:'s', mes:'2026-06', data:'2026-06-13'},
+  {desc:'Sônica e Marco',            val:1000.00,tipo:'s', mes:'2026-06', data:'2026-06-13'},
+  {desc:'Prefeitura Porto Alegre',   val:58.13,  tipo:'s', mes:'2026-06', data:'2026-06-13'},
+];
+
+const logEl = document.getElementById('log');
+function log(msg, cls='') {
+  const d = document.createElement('div');
+  d.className = cls;
+  d.textContent = msg;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+window.runSeed = async function() {
+  const btn = document.getElementById('btn');
+  btn.disabled = true;
+  log('Iniciando seed de ' + DADOS.length + ' lançamentos…');
+  let ok = 0, err = 0;
+  for(const item of DADOS) {
+    try {
+      await addDoc(collection(db,'transparencia'), {...item, criadoEm: serverTimestamp()});
+      log('✓ ' + item.mes + ' — ' + item.desc + ' R$ ' + item.val);
+      ok++;
+    } catch(e) {
+      log('✗ Erro: ' + item.desc + ' — ' + e.message, 'err');
+      err++;
+    }
+    await new Promise(r => setTimeout(r, 120)); // rate limit
+  }
+  if(err === 0) {
+    log('', '');
+    log('🎉 Seed concluído! ' + ok + ' lançamentos criados. Pode fechar esta página.', 'done');
+  } else {
+    log('Concluído com ' + err + ' erros. Verifique acima.', 'err');
+  }
+  btn.textContent = 'Concluído';
+};
+</script>
+</body>
+</html>
