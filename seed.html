@@ -22,6 +22,15 @@ p{font-size:13px;color:#8a5060;margin-bottom:20px;line-height:1.5}
 <div class="box">
   <h1>🌱 Seed — Dados Retroativos</h1>
   <p>Este script popula o Firebase com os lançamentos de Janeiro a Junho de 2026. <strong>Execute apenas uma vez.</strong> Feche a página após concluir.</p>
+  <div style="margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+      <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a5060" id="prog-label">Aguardando…</span>
+      <span style="font-family:'Cinzel',serif;font-size:10px;font-weight:700;color:#c4396b" id="prog-pct">0%</span>
+    </div>
+    <div style="height:8px;background:rgba(196,57,107,.1);border-radius:99px;overflow:hidden">
+      <div id="prog-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#c4396b,#e8688a);border-radius:99px;transition:width .3s ease"></div>
+    </div>
+  </div>
   <div class="log" id="log">Aguardando…</div>
   <button class="btn" id="btn" onclick="runSeed()">Iniciar seed</button>
 </div>
@@ -100,19 +109,27 @@ function log(msg, cls='') {
 window.runSeed = async function() {
   const btn = document.getElementById('btn');
   btn.disabled = true;
-  log('Iniciando seed de ' + DADOS.length + ' lançamentos…');
+  const total = DADOS.length;
+  log('Iniciando seed de ' + total + ' lançamentos…');
   let ok = 0, err = 0;
-  for(const item of DADOS) {
+  for(let i = 0; i < DADOS.length; i++) {
+    const item = DADOS[i];
+    const pct = Math.round(((i) / total) * 100);
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.getElementById('prog-pct').textContent = pct + '%';
+    document.getElementById('prog-label').textContent = (i+1) + ' de ' + total + ' — ' + item.desc;
     try {
       await addDoc(collection(db,'transparencia'), {...item, criadoEm: serverTimestamp()});
-      log('✓ ' + item.mes + ' — ' + item.desc + ' R$ ' + item.val);
+      log('✓ ' + item.mes + ' — ' + item.desc + '  R$ ' + item.val);
       ok++;
     } catch(e) {
       log('✗ Erro: ' + item.desc + ' — ' + e.message, 'err');
       err++;
     }
-    await new Promise(r => setTimeout(r, 120)); // rate limit
+    await new Promise(r => setTimeout(r, 120));
   }
+  document.getElementById('prog-bar').style.width = '100%';
+  document.getElementById('prog-pct').textContent = '100%';
   if(err === 0) {
     log('', '');
     log('🎉 Seed concluído! ' + ok + ' lançamentos criados. Pode fechar esta página.', 'done');
