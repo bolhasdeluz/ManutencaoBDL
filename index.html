@@ -1060,9 +1060,9 @@ G.lancarFixas=async function(){
 // ── Firebase listeners ──
 function listenMes(){
   if(S.unsubMes)S.unsubMes();
-  const q=query(collection(db,'transparencia'),where('mes','==',S.mesAtual),orderBy('criadoEm','desc'));
+  const q=query(collection(db,'transparencia'),where('mes','==',S.mesAtual));
   S.unsubMes=onSnapshot(q,
-    snap=>{S.transac=snap.docs.map(d=>({id:d.id,...d.data()}));renderFinancas();renderTambor();},
+    snap=>{S.transac=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));renderFinancas();renderTambor();},
     e=>{console.error('transparencia/mes:',e.code,e.message);if(e.code==='failed-precondition')toast('Crie o índice no Firebase Console (F12 para ver link)',true);}
   );
 }
@@ -1077,16 +1077,16 @@ function listenAnual(){
   },e=>console.error('transparencia/anual:',e));
 }
 function initListeners(){
-  onSnapshot(query(collection(db,'manutencao'),orderBy('criadoEm','desc')),
-    snap=>{S.manut=snap.docs.map(d=>({id:d.id,...d.data()}));renderManut();},
+  onSnapshot(collection(db,'manutencao'),
+    snap=>{S.manut=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));renderManut();},
     e=>{ console.error('manutencao:',e.code); toast('Erro ao carregar manutenção: '+e.code,true); }
   );
-  onSnapshot(query(collection(db,'estoque'),orderBy('criadoEm','desc')),
-    snap=>{S.estoque=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();},
+  onSnapshot(collection(db,'estoque'),
+    snap=>{S.estoque=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.criadoEm?.seconds||0)-(b.criadoEm?.seconds||0));renderSuprimentos();},
     e=>console.error('estoque:',e.code)
   );
-  onSnapshot(query(collection(db,'lista_compras'),orderBy('criadoEm','desc')),
-    snap=>{S.avulsos=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();},
+  onSnapshot(collection(db,'lista_compras'),
+    snap=>{S.avulsos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));renderSuprimentos();},
     e=>console.error('lista_compras:',e.code)
   );
   listenMes();listenAnual();listenTambor();listenEncontro();
