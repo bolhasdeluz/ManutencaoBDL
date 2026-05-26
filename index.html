@@ -404,7 +404,7 @@ document.querySelectorAll('.tab').forEach(t => {
 // ── Admin ──
 G.doLogin = function() {
   const v = document.getElementById('login-senha').value;
-  if(v === 'terreiro') {
+  if(v === 'terreiro2025') {
     S.isAdmin = true;
     document.getElementById('modal-login').style.display = 'none';
     document.getElementById('login-senha').value = '';
@@ -605,11 +605,14 @@ function renderFaxina() {
   document.getElementById('fax-fill').style.width = pct+'%';
   let html = '';
   S.faxina.forEach(f => {
-    html += `<div class="fax-card${f.ok?' done':''}${S.isAdmin?' click':''}" onclick="${S.isAdmin?`toggleFax('${f.id}')`:''}" >
-      <span style="font-size:18px">${f.ok?'✅':'🔲'}</span>
-      <span class="fax-name${f.ok?' done':''}">${f.area}</span>
-      ${S.isAdmin?`<button class="bic bic-d" onclick="event.stopPropagation();delFax('${f.id}')">🗑️</button>`:''}
-    </div>`;
+    const dc = f.ok ? ' done' : '';
+    const cc = S.isAdmin ? ' click' : '';
+    const oc = S.isAdmin ? "toggleFax('" + f.id + "')" : '';
+    const db = S.isAdmin ? '<button class="bic bic-d" onclick="event.stopPropagation();delFax(\'' + f.id + '\')">🗑️</button>' : '';
+    html += '<div class="fax-card' + dc + cc + '" onclick="' + oc + '">'
+      + '<span style="font-size:18px">' + (f.ok ? '✅' : '🔲') + '</span>'
+      + '<span class="fax-name' + dc + '">' + f.area + '</span>'
+      + db + '</div>';
   });
   if(!S.faxina.length) html = '<div class="empty">Nenhuma área cadastrada</div>';
   el.innerHTML = html;
@@ -902,13 +905,10 @@ function renderTambor() {
   for(let i=1;i<=qtd;i++) {
     const st = data['t'+i]||'';
     const cfg = TAMBOR_LABELS[st]||TAMBOR_LABELS[''];
-    html += `<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">
-      <span style="font-size:20px">${cfg.icon}</span>
-      <div>
-        <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ${i}</div>
-        <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:${cfg.cor}">${cfg.text}</div>
-      </div>
-    </div>`;
+    html += '<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">'
+      + '<span style="font-size:20px">' + cfg.icon + '</span>'
+      + '<div><div style="font-family:Cinzel,serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ' + i + '</div>'
+      + '<div style="font-family:Playfair Display,serif;font-size:14px;font-weight:600;color:' + cfg.cor + '">' + cfg.text + '</div></div></div>';
   }
   html += '</div>';
   el.innerHTML = html;
