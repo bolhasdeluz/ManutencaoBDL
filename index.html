@@ -182,21 +182,38 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   <div class="panel" id="panel-estoque">
     <div class="stats-row">
       <div class="stat-c" style="border-top:3px solid var(--verde)">
-        <div class="stat-n" id="est-cnt-tem" style="color:var(--verde)">–</div>
-        <div class="stat-l">Temos</div>
+        <div class="stat-n" id="est-cnt-ok" style="color:var(--verde)">–</div>
+        <div class="stat-l">Ok</div>
+      </div>
+      <div class="stat-c" style="border-top:3px solid var(--ambar)">
+        <div class="stat-n" id="est-cnt-baixo" style="color:var(--ambar)">–</div>
+        <div class="stat-l">Estoque baixo</div>
       </div>
       <div class="stat-c" style="border-top:3px solid var(--red)">
-        <div class="stat-n" id="est-cnt-falta" style="color:var(--red)">–</div>
-        <div class="stat-l">Falta repor</div>
+        <div class="stat-n" id="est-cnt-sem" style="color:var(--red)">–</div>
+        <div class="stat-l">Sem estoque</div>
       </div>
     </div>
+    <div id="est-cat-filter" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
     <div id="estoque-content"><div class="load">Carregando…</div></div>
     <div id="estoque-add-box" class="add-box" style="display:none">
-      <div class="erow">
-        <input id="est-new-nome" class="inp inp-grow" placeholder="Nome do item" onkeydown="if(event.key==='Enter')addEstItem()"/>
-        <button class="btn-p" onclick="addEstItem()">+</button>
+      <div class="ef">
+        <div class="erow">
+          <input id="est-new-nome" class="inp inp-grow" placeholder="Nome do item"/>
+          <input id="est-new-cat" class="inp" style="width:120px" placeholder="Categoria"/>
+        </div>
+        <div class="erow">
+          <div style="flex:1"><label class="flbl">Qtd atual</label><input id="est-new-qtd" class="inp" type="number" min="0" step="1" value="0"/></div>
+          <div style="flex:1"><label class="flbl">Unidade</label><input id="est-new-un" class="inp" placeholder="un, kg, L…" value="un"/></div>
+          <div style="flex:1"><label class="flbl">Mínimo</label><input id="est-new-min" class="inp" type="number" min="0" step="1" value="1"/></div>
+        </div>
+        <div class="ebtns">
+          <button class="btn-c" onclick="hideAddEst()">Cancelar</button>
+          <button class="btn-p" onclick="addEstItem()">Adicionar</button>
+        </div>
       </div>
     </div>
+    <button id="estoque-add-btn" class="add-box btn-add-f" style="display:none" onclick="showAddEst()">+ Adicionar item</button>
   </div>
 
   <!-- FAXINA -->
@@ -204,8 +221,8 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     <div class="prog-box">
       <div class="prog-top">
         <div>
-          <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)">Progresso da faxina</div>
-          <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-dim);margin-top:2px" id="fax-sub">– de – áreas limpas</div>
+          <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)">Próxima faxina</div>
+          <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-dim);margin-top:2px" id="fax-sub">– de – áreas com participantes</div>
         </div>
         <div class="prog-pct" id="fax-pct">0%</div>
       </div>
@@ -218,7 +235,11 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
         <button class="btn-p" onclick="addFaxArea()">+</button>
       </div>
     </div>
-    <div id="fax-hint" class="hint" style="display:none">Faça login como admin para marcar as áreas</div>
+    <div id="fax-admin-btns" style="display:none;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn-p" style="background:var(--verde);font-size:10px" onclick="openRegistrarFaxina()">✅ Registrar faxina realizada</button>
+      <button class="btn-c" style="font-size:10px" onclick="openHistoricoFaxina()">📋 Ver histórico</button>
+    </div>
+    <div id="fax-hint" class="hint" style="display:none">Coloque seu nome nas áreas que você vai ajudar a limpar</div>
   </div>
 
   <!-- COMPRAS -->
@@ -246,7 +267,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
   <!-- FINANÇAS -->
   <div class="panel" id="panel-financas">
-    <div class="anual-wrap">
+    <div class="anual-wrap" id="anual-wrap-chart">
       <div class="anual-lbl">Resumo <span id="fin-ano"></span></div>
       <div id="anual-load" class="load">Carregando…</div>
       <table class="at" id="anual-table" style="display:none">
@@ -420,6 +441,8 @@ G.doLogin = function() {
     document.getElementById('btn-fin-editar').style.display = 'inline-block';
     document.getElementById('btn-fixas').style.display = 'inline-block';
     document.getElementById('btn-edit-tambor').style.display = 'inline-block';
+    document.getElementById('fax-admin-btns').style.display = 'flex';
+    document.getElementById('estoque-add-btn').style.display = 'block';
     renderAll();
     toast('Modo admin ativado ✨');
   } else {
@@ -445,6 +468,8 @@ document.getElementById('btn-admin-toggle').addEventListener('click', () => {
     document.getElementById('btn-fin-editar').style.display = 'none';
     document.getElementById('btn-fixas').style.display = 'none';
     document.getElementById('btn-edit-tambor').style.display = 'none';
+    document.getElementById('fax-admin-btns').style.display = 'none';
+    document.getElementById('estoque-add-btn').style.display = 'none';
     document.getElementById('fin-form').style.display = 'none';
     S.finEdit = false;
     renderAll();
@@ -546,94 +571,9 @@ G.delManut = async function(id) {
   try { await deleteDoc(doc(db,'manutencao',id)); toast('Removida'); } catch(e){ toast('Erro',true); }
 };
 
-// ── ESTOQUE ──
-function renderEstoque() {
-  const el = document.getElementById('estoque-content');
-  const tem = S.estoque.filter(e=>e.tem);
-  const falta = S.estoque.filter(e=>!e.tem);
-  document.getElementById('est-cnt-tem').textContent = tem.length;
-  document.getElementById('est-cnt-falta').textContent = falta.length;
-  let html = '';
-  [[true,'Temos','#3a9a78','✅'],[false,'Falta repor','var(--red)','💥']].forEach(([t,lbl,cor,ic]) => {
-    const list = t ? tem : falta;
-    html += `<div class="section"><div class="sec-hd">
-      <span class="sec-dot" style="background:${cor}"></span>
-      <span class="sec-lbl">${lbl}</span><span class="sec-cnt">${list.length}</span>
-    </div>`;
-    if(!list.length) html += `<div class="empty">${t?'Nenhum item':'🎉 Tudo em estoque!'}</div>`;
-    list.forEach(item => {
-      html += `<div class="card" style="border-left:3px solid ${cor}">
-        <div class="card-row">
-          <div class="card-left"><span style="font-size:18px">${ic}</span>
-            <div class="card-title">${item.nome}</div>
-          </div>
-          ${S.isAdmin?`<div class="card-acts">
-            <button class="bic bic-e" onclick="toggleEst('${item.id}')" title="${t?'Marcar como faltando':'Marcar como disponível'}">↕️</button>
-            <button class="bic bic-d" onclick="delEst('${item.id}')">🗑️</button>
-          </div>`:''}
-        </div>
-      </div>`;
-    });
-    html += '</div>';
-  });
-  el.innerHTML = html;
-}
-G.addEstItem = async function() {
-  const nome = document.getElementById('est-new-nome').value.trim();
-  if(!nome){ toast('Digite o nome',true); return; }
-  try {
-    await addDoc(collection(db,'estoque'),{nome,tem:false,criadoEm:serverTimestamp()});
-    document.getElementById('est-new-nome').value=''; toast('Item adicionado ✓');
-  } catch(e){ toast('Erro',true); }
-};
-G.toggleEst = async function(id) {
-  const item = S.estoque.find(x=>x.id===id); if(!item) return;
-  try { await updateDoc(doc(db,'estoque',id),{tem:!item.tem}); } catch(e){ toast('Erro',true); }
-};
-G.delEst = async function(id) {
-  try { await deleteDoc(doc(db,'estoque',id)); toast('Removido'); } catch(e){ toast('Erro',true); }
-};
+// ── ESTOQUE v2 ── (replaced below)
 
-// ── FAXINA ──
-function renderFaxina() {
-  const el = document.getElementById('faxina-content');
-  const ok = S.faxina.filter(f=>f.ok).length;
-  const total = S.faxina.length;
-  const pct = total ? Math.round((ok/total)*100) : 0;
-  document.getElementById('fax-pct').textContent = pct+'%';
-  document.getElementById('fax-sub').textContent = ok+' de '+total+' áreas limpas';
-  document.getElementById('fax-fill').style.width = pct+'%';
-  let html = '';
-  S.faxina.forEach(f => {
-    const dc = f.ok ? ' done' : '';
-    const cc = S.isAdmin ? ' click' : '';
-    const oc = S.isAdmin ? "toggleFax('" + f.id + "')" : '';
-    const db = S.isAdmin ? '<button class="bic bic-d" onclick="event.stopPropagation();delFax(\'' + f.id + '\')">🗑️</button>' : '';
-    html += '<div class="fax-card' + dc + cc + '" onclick="' + oc + '">'
-      + '<span style="font-size:18px">' + (f.ok ? '✅' : '🔲') + '</span>'
-      + '<span class="fax-name' + dc + '">' + f.area + '</span>'
-      + db + '</div>';
-  });
-  if(!S.faxina.length) html = '<div class="empty">Nenhuma área cadastrada</div>';
-  el.innerHTML = html;
-  if(!S.isAdmin) document.getElementById('fax-hint').style.display = 'block';
-}
-G.addFaxArea = async function() {
-  const area = document.getElementById('fax-new-area').value.trim();
-  if(!area){ toast('Digite a área',true); return; }
-  try {
-    await addDoc(collection(db,'faxina'),{area,ok:false,criadoEm:serverTimestamp()});
-    document.getElementById('fax-new-area').value=''; toast('Área adicionada ✓');
-  } catch(e){ toast('Erro',true); }
-};
-G.toggleFax = async function(id) {
-  if(!S.isAdmin) return;
-  const f = S.faxina.find(x=>x.id===id); if(!f) return;
-  try { await updateDoc(doc(db,'faxina',id),{ok:!f.ok}); } catch(e){ toast('Erro',true); }
-};
-G.delFax = async function(id) {
-  try { await deleteDoc(doc(db,'faxina',id)); toast('Removida'); } catch(e){ toast('Erro',true); }
-};
+// ── FAXINA v2 ── (replaced below)
 
 // ── COMPRAS ──
 function renderCompras() {
@@ -743,14 +683,7 @@ G.delComprador = async function(id,idx){
   try{await updateDoc(doc(db,'lista_compras',id),{compradores:novos});}catch(e){toast('Erro',true);}
 };
 
-// ── FINANÇAS ──
-function preencherMeses(){
-  const sel=document.getElementById('sel-mes');
-  const hoje=new Date();const meses=[];
-  for(let i=0;i<24;i++){const d=new Date(hoje.getFullYear(),hoje.getMonth()-i,1);meses.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));}
-  sel.innerHTML=meses.map(m=>`<option value="${m}">${nomeMes(m)}</option>`).join('');
-  S.mesAtual=meses[0];
-}
+// ── FINANÇAS v2 ── (replaced below)
 G.onMesChange = function(){S.mesAtual=document.getElementById('sel-mes').value;listenMes();};
 G.toggleFinEdit = function(){S.finEdit=!S.finEdit;document.getElementById('fin-form').style.display=S.finEdit?'block':'none';};
 G.setTipo = function(t){
@@ -847,11 +780,7 @@ function listenMes(){
   const q=query(collection(db,'transparencia'),where('mes','==',S.mesAtual),orderBy('criadoEm','desc'));
   S.unsubMes=onSnapshot(q,snap=>{S.transac=snap.docs.map(d=>({id:d.id,...d.data()}));renderFinancas();});
 }
-function listenAnual(){
-  if(S.unsubAnual) S.unsubAnual();
-  const q=query(collection(db,'transparencia'),where('mes','>=',S.anoAtual+'-01'),where('mes','<=',S.anoAtual+'-12'));
-  S.unsubAnual=onSnapshot(q,snap=>renderAnual(snap.docs.map(d=>({id:d.id,...d.data()}))));
-}
+// listenAnual v2 below
 function initListeners(){
   onSnapshot(query(collection(db,'manutencao'),orderBy('criadoEm','desc')),snap=>{
     S.manut=snap.docs.map(d=>({id:d.id,...d.data()}));renderManut();
@@ -876,7 +805,7 @@ function renderAll(){
 
 // ── CONTAS FIXAS ──
 const CONTAS_FIXAS = [
-  {id:'claro',  nome:'Claro NXT (Internet)',        val:105,   fixo:true},
+  {id:'claro',  nome:'Claro NXT (Internet)',       val:105,   fixo:true},
   {id:'ceee',   nome:'CEEE-D (Energia Elétrica)',  val:108.54,fixo:false},
   {id:'lm1',    nome:'LM Segurança',               val:707.5, fixo:false},
   {id:'lm2',    nome:'LM Segurança — Adicional',   val:200,   fixo:true},
@@ -907,15 +836,15 @@ function renderTambor() {
   const el = document.getElementById('tambor-content');
   const data = tamboresCache[S.mesAtual] || {};
   const qtd = parseInt(data.qtd||0);
-  if(!qtd) { el.innerHTML = `<span style="font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim)">A definir para este mês</span>`; return; }
+  if(!qtd) { el.innerHTML = '<span style="font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim)">A definir para este mês</span>'; return; }
   let html = '<div style="display:flex;gap:12px;flex-wrap:wrap">';
   for(let i=1;i<=qtd;i++) {
     const st = data['t'+i]||'';
     const cfg = TAMBOR_LABELS[st]||TAMBOR_LABELS[''];
-    html += `<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">`
-      + `<span style="font-size:20px">${cfg.icon}</span>`
-      + `<div><div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ${i}</div>`
-      + `<div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:${cfg.cor}">${cfg.text}</div></div></div>`;
+    html += '<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">'
+      + '<span style="font-size:20px">' + cfg.icon + '</span>'
+      + '<div><div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ' + i + '</div>'
+      + '<div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:' + cfg.cor + '">' + cfg.text + '</div></div></div>';
   }
   html += '</div>';
   el.innerHTML = html;
@@ -999,6 +928,362 @@ G.lancarFixas = async function() {
   btn.disabled = false;
 };
 
+
+// ══════════════════════════════════════════════
+// ── ESTOQUE v2 — categorias + qtd + mínimo ──
+// ══════════════════════════════════════════════
+let estCatFiltro = 'todos';
+
+function estStatus(item) {
+  const qtd = item.qtd ?? (item.tem ? 1 : 0);
+  const min = item.min ?? 1;
+  if (qtd <= 0) return 'sem';
+  if (qtd <= min) return 'baixo';
+  return 'ok';
+}
+
+function renderEstoque() {
+  const el = document.getElementById('estoque-content');
+  const cats = ['todos', ...new Set(S.estoque.map(e => e.cat || 'Outros').sort())];
+
+  // Filter bar
+  const filterEl = document.getElementById('est-cat-filter');
+  filterEl.innerHTML = cats.map(c =>
+    `<button onclick="setEstCat('${c}')" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:${estCatFiltro===c?'var(--gold)':'transparent'};color:${estCatFiltro===c?'#fff':'var(--text-dim)'};font-family:'Cinzel',serif;font-size:9px;letter-spacing:.08em;cursor:pointer;text-transform:uppercase">${c==='todos'?'Todos':c}</button>`
+  ).join('');
+
+  const filtered = estCatFiltro === 'todos' ? S.estoque : S.estoque.filter(e => (e.cat||'Outros') === estCatFiltro);
+  const ok    = filtered.filter(e => estStatus(e) === 'ok').length;
+  const baixo = filtered.filter(e => estStatus(e) === 'baixo').length;
+  const sem   = filtered.filter(e => estStatus(e) === 'sem').length;
+  document.getElementById('est-cnt-ok').textContent    = S.estoque.filter(e=>estStatus(e)==='ok').length;
+  document.getElementById('est-cnt-baixo').textContent = S.estoque.filter(e=>estStatus(e)==='baixo').length;
+  document.getElementById('est-cnt-sem').textContent   = S.estoque.filter(e=>estStatus(e)==='sem').length;
+
+  // Group by category
+  const bycat = {};
+  filtered.forEach(item => {
+    const c = item.cat || 'Outros';
+    if (!bycat[c]) bycat[c] = [];
+    bycat[c].push(item);
+  });
+
+  let html = '';
+  Object.entries(bycat).sort(([a],[b])=>a.localeCompare(b)).forEach(([cat, items]) => {
+    html += `<div class="section"><div class="sec-hd">
+      <span class="sec-lbl">${cat}</span><span class="sec-cnt">${items.length}</span>
+    </div>`;
+    items.forEach(item => {
+      const st = estStatus(item);
+      const qtd = item.qtd ?? (item.tem ? 1 : 0);
+      const min = item.min ?? 1;
+      const un  = item.un  || 'un';
+      const cor = st==='ok'?'#3a9a78':st==='baixo'?'var(--ambar)':'var(--red)';
+      const ic  = st==='ok'?'✅':st==='baixo'?'⚠️':'❌';
+      const alerta = st==='baixo' ? `<span style="font-family:'Cinzel',serif;font-size:9px;color:var(--ambar);letter-spacing:.06em;text-transform:uppercase">Mín: ${min} ${un}</span>` : '';
+      html += `<div class="card" style="border-left:3px solid ${cor}">
+        <div class="card-row">
+          <div class="card-left">
+            <span style="font-size:18px">${ic}</span>
+            <div>
+              <div class="card-title">${item.nome}</div>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:3px">
+                <span style="font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:${cor}">${qtd} ${un}</span>
+                ${alerta}
+              </div>
+            </div>
+          </div>
+          ${S.isAdmin ? `<div class="card-acts">
+            <button class="bic bic-e" onclick="openEditEst('${item.id}')">✏️</button>
+            <button class="bic bic-d" onclick="delEst('${item.id}')">🗑️</button>
+          </div>` : ''}
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  if (!filtered.length) html = '<div class="empty">Nenhum item nesta categoria</div>';
+  el.innerHTML = html;
+}
+
+G.setEstCat = function(c) { estCatFiltro = c; renderEstoque(); };
+
+G.showAddEst = function() {
+  document.getElementById('estoque-add-btn').style.display = 'none';
+  document.getElementById('estoque-add-box').style.display = 'block';
+};
+G.hideAddEst = function() {
+  document.getElementById('estoque-add-btn').style.display = 'block';
+  document.getElementById('estoque-add-box').style.display = 'none';
+};
+G.addEstItem = async function() {
+  const nome = document.getElementById('est-new-nome').value.trim();
+  if (!nome) { toast('Digite o nome', true); return; }
+  const cat  = document.getElementById('est-new-cat').value.trim() || 'Outros';
+  const qtd  = parseFloat(document.getElementById('est-new-qtd').value) || 0;
+  const un   = document.getElementById('est-new-un').value.trim() || 'un';
+  const min  = parseFloat(document.getElementById('est-new-min').value) || 1;
+  try {
+    await addDoc(collection(db,'estoque'), {nome, cat, qtd, un, min, tem: qtd > 0, criadoEm: serverTimestamp()});
+    document.getElementById('est-new-nome').value = '';
+    document.getElementById('est-new-qtd').value = '0';
+    G.hideAddEst(); toast('Item adicionado ✓');
+  } catch(e) { toast('Erro', true); }
+};
+G.openEditEst = function(id) {
+  const item = S.estoque.find(x => x.id === id); if (!item) return;
+  document.getElementById('edit-est-id').value = id;
+  document.getElementById('edit-est-nome').value = item.nome;
+  document.getElementById('edit-est-cat').value = item.cat || '';
+  document.getElementById('edit-est-qtd').value = item.qtd ?? (item.tem ? 1 : 0);
+  document.getElementById('edit-est-un').value = item.un || 'un';
+  document.getElementById('edit-est-min').value = item.min ?? 1;
+  document.getElementById('modal-edit-est').style.display = 'flex';
+};
+G.saveEditEst = async function() {
+  const id   = document.getElementById('edit-est-id').value;
+  const nome = document.getElementById('edit-est-nome').value.trim();
+  if (!nome) { toast('Digite o nome', true); return; }
+  const qtd = parseFloat(document.getElementById('edit-est-qtd').value) || 0;
+  const min = parseFloat(document.getElementById('edit-est-min').value) || 1;
+  try {
+    await updateDoc(doc(db,'estoque',id), {
+      nome, cat: document.getElementById('edit-est-cat').value.trim()||'Outros',
+      qtd, un: document.getElementById('edit-est-un').value.trim()||'un',
+      min, tem: qtd > 0
+    });
+    document.getElementById('modal-edit-est').style.display = 'none';
+    toast('Salvo ✓');
+  } catch(e) { toast('Erro', true); }
+};
+G.toggleEst = async function(id) {
+  const item = S.estoque.find(x => x.id === id); if (!item) return;
+  try { await updateDoc(doc(db,'estoque',id), {tem: !item.tem, qtd: item.tem ? 0 : 1}); } catch(e) { toast('Erro', true); }
+};
+
+// ══════════════════════════════════════════════
+// ── FAXINA v2 — participação + memória ──
+// ══════════════════════════════════════════════
+let faxHistCache = [];
+let faxPartSt = 'vai';
+
+function renderFaxina() {
+  const el = document.getElementById('faxina-content');
+  const total = S.faxina.length;
+  const comPart = S.faxina.filter(f => (f.participantes||[]).some(p => p.st === 'vai')).length;
+  const pct = total ? Math.round((comPart / total) * 100) : 0;
+  document.getElementById('fax-pct').textContent = pct + '%';
+  document.getElementById('fax-sub').textContent = comPart + ' de ' + total + ' áreas com participantes';
+  document.getElementById('fax-fill').style.width = pct + '%';
+
+  let html = '';
+  S.faxina.forEach(f => {
+    const parts = f.participantes || [];
+    const vai    = parts.filter(p => p.st === 'vai');
+    const talvez = parts.filter(p => p.st === 'talvez');
+    const nao    = parts.filter(p => p.st === 'nao');
+    const temAlguem = vai.length > 0;
+
+    html += '<div class="fax-card' + (temAlguem ? ' done' : '') + '" style="flex-direction:column;align-items:flex-start;gap:8px">'
+      + '<div style="display:flex;align-items:center;gap:12px;width:100%">'
+      + '<span style="font-size:18px">' + (temAlguem ? '✅' : '🔲') + '</span>'
+      + '<span class="fax-name' + (temAlguem ? ' done' : '') + '" style="flex:1">' + f.area + '</span>'
+      + '<button class="btn-vou" onclick="openFaxPart(\'' + f.id + '\',\'' + f.area.replace(/'/g,"\\'") + '\')" style="font-size:11px;padding:5px 10px">+ Participar</button>'
+      + (S.isAdmin ? '<button class="bic bic-d" onclick="delFax(\'' + f.id + '\')">🗑️</button>' : '')
+      + '</div>';
+
+    if (parts.length) {
+      html += '<div style="display:flex;flex-wrap:wrap;gap:5px;padding-left:30px">';
+      vai.forEach(p    => html += '<span style="background:var(--verde-claro);color:var(--verde-txt);border-radius:20px;font-size:11px;padding:2px 9px">✅ ' + p.nome + '</span>');
+      talvez.forEach(p => html += '<span style="background:var(--ambar-claro);color:var(--ambar-txt);border-radius:20px;font-size:11px;padding:2px 9px">🤔 ' + p.nome + '</span>');
+      nao.forEach(p    => html += '<span style="background:var(--red-dim);color:var(--red);border-radius:20px;font-size:11px;padding:2px 9px">❌ ' + p.nome + '</span>');
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  if (!S.faxina.length) html = '<div class="empty">Nenhuma área cadastrada</div>';
+  el.innerHTML = html;
+  if (!S.isAdmin) document.getElementById('fax-hint').style.display = 'block';
+}
+
+G.setFaxSt = function(st) {
+  faxPartSt = st;
+  ['vai','talvez','nao'].forEach(s => {
+    const btn = document.getElementById('fax-st-' + s);
+    if (!btn) return;
+    btn.className = 'tt' + (s === st ? (s==='vai'?' e':s==='nao'?' s':' active') : '');
+  });
+  document.getElementById('fax-st-talvez').style.background = st==='talvez'?'var(--ambar-claro)':'';
+  document.getElementById('fax-st-talvez').style.color = st==='talvez'?'var(--ambar-txt)':'';
+};
+
+G.openFaxPart = function(id, area) {
+  document.getElementById('fax-part-id').value = id;
+  document.getElementById('fax-part-titulo').textContent = area;
+  document.getElementById('fax-part-nome').value = '';
+  faxPartSt = 'vai';
+  G.setFaxSt('vai');
+  document.getElementById('modal-fax-part').style.display = 'flex';
+  setTimeout(() => document.getElementById('fax-part-nome').focus(), 50);
+};
+
+G.confirmarFaxPart = async function() {
+  const nome = document.getElementById('fax-part-nome').value.trim();
+  if (!nome) { toast('Digite seu nome', true); return; }
+  const id   = document.getElementById('fax-part-id').value;
+  const fax  = S.faxina.find(x => x.id === id); if (!fax) return;
+  const parts = [...(fax.participantes || [])];
+  const existing = parts.findIndex(p => p.nome.toLowerCase() === nome.toLowerCase());
+  if (existing >= 0) parts[existing] = {nome, st: faxPartSt};
+  else parts.push({nome, st: faxPartSt});
+  try {
+    await updateDoc(doc(db,'faxina',id), {participantes: parts});
+    document.getElementById('modal-fax-part').style.display = 'none';
+    toast('Confirmado ✓');
+  } catch(e) { toast('Erro', true); }
+};
+
+G.openRegistrarFaxina = function() {
+  document.getElementById('reg-fax-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('reg-fax-obs').value = '';
+  document.getElementById('modal-reg-faxina').style.display = 'flex';
+};
+
+G.registrarFaxina = async function() {
+  const data = document.getElementById('reg-fax-data').value;
+  const obs  = document.getElementById('reg-fax-obs').value.trim();
+  const resumo = S.faxina.map(f => ({
+    area: f.area,
+    participantes: f.participantes || []
+  }));
+  try {
+    await addDoc(collection(db,'faxina_historico'), {data, obs, resumo, criadoEm: serverTimestamp()});
+    // Reset all areas
+    await Promise.all(S.faxina.map(f => updateDoc(doc(db,'faxina',f.id), {participantes: []})));
+    document.getElementById('modal-reg-faxina').style.display = 'none';
+    toast('Faxina registrada e áreas resetadas ✓');
+  } catch(e) { toast('Erro', true); }
+};
+
+G.openHistoricoFaxina = async function() {
+  document.getElementById('modal-hist-faxina').style.display = 'flex';
+  const el = document.getElementById('hist-faxina-content');
+  el.innerHTML = '<div class="load">Carregando…</div>';
+  try {
+    const { getDocs } = await import("https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js");
+    const q = query(collection(db,'faxina_historico'), orderBy('criadoEm','desc'));
+    const snap = await getDocs(q);
+    if (snap.empty) { el.innerHTML = '<div class="empty">Nenhuma faxina registrada ainda</div>'; return; }
+    let html = '';
+    snap.docs.forEach(d => {
+      const h = d.data();
+      const [a,m,dia] = (h.data||'').split('-');
+      const dtStr = h.data ? dia+'/'+m+'/'+a : '—';
+      const vaiFull = (h.resumo||[]).flatMap(r=>(r.participantes||[]).filter(p=>p.st==='vai').map(p=>p.nome));
+      const nomes = [...new Set(vaiFull)];
+      html += '<div class="card" style="margin-bottom:8px">'
+        + '<div style="font-family:\'Cinzel\',serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px">' + dtStr + '</div>'
+        + '<div style="font-size:13px;color:var(--text-dim);font-family:\'Crimson Pro\',serif;font-style:italic">'
+        + (nomes.length ? 'Participaram: ' + nomes.join(', ') : 'Sem participantes registrados')
+        + '</div>'
+        + (h.obs ? '<div style="font-size:12px;color:var(--text-dim);margin-top:4px">' + h.obs + '</div>' : '')
+        + '</div>';
+    });
+    el.innerHTML = html;
+  } catch(e) { el.innerHTML = '<div class="empty">Erro ao carregar</div>'; }
+};
+
+// ══════════════════════════════════════════════
+// ── FINANÇAS v2 — meses filtrados + gráfico ──
+// ══════════════════════════════════════════════
+let mesesComDados = new Set();
+
+function preencherMeses() {
+  const sel = document.getElementById('sel-mes');
+  // Starts with current month, will be filtered once data loads
+  const hoje = new Date();
+  S.mesAtual = hoje.getFullYear() + '-' + String(hoje.getMonth()+1).padStart(2,'0');
+  sel.innerHTML = `<option value="${S.mesAtual}">${nomeMes(S.mesAtual)}</option>`;
+}
+
+function atualizarSeletorMeses() {
+  const sel = document.getElementById('sel-mes');
+  const cur = sel.value || S.mesAtual;
+  const meses = [...mesesComDados].sort().reverse();
+  if (!meses.includes(cur)) meses.unshift(cur);
+  sel.innerHTML = meses.map(m => `<option value="${m}" ${m===cur?'selected':''}>${nomeMes(m)}</option>`).join('');
+  S.mesAtual = sel.value;
+}
+
+function renderGrafico(todos) {
+  const canvasId = 'fin-chart';
+  let canvas = document.getElementById(canvasId);
+  if (!canvas) {
+    const wrap = document.getElementById('anual-wrap-chart');
+    if (!wrap) return;
+    canvas = document.createElement('canvas');
+    canvas.id = canvasId;
+    canvas.style.cssText = 'width:100%;height:180px;margin-top:12px';
+    wrap.appendChild(canvas);
+  }
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth || 600;
+  canvas.height = 180;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const meses = [];
+  for (let m = 1; m <= 12; m++) meses.push(S.anoAtual + '-' + String(m).padStart(2,'0'));
+  const entradas = meses.map(ms => todos.filter(i=>i.mes===ms&&i.tipo==='e').reduce((a,i)=>a+i.val,0));
+  const saidas   = meses.map(ms => todos.filter(i=>i.mes===ms&&i.tipo==='s').reduce((a,i)=>a+i.val,0));
+  const maxVal   = Math.max(...entradas, ...saidas, 1);
+
+  const W = canvas.width, H = canvas.height;
+  const pad = {l:8, r:8, t:16, b:28};
+  const chartW = W - pad.l - pad.r;
+  const chartH = H - pad.t - pad.b;
+  const barW   = chartW / 12 / 2 - 3;
+
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'center';
+
+  meses.forEach((ms, i) => {
+    const x = pad.l + (chartW / 12) * i + (chartW / 12) / 2;
+    const eH = (entradas[i] / maxVal) * chartH;
+    const sH = (saidas[i]   / maxVal) * chartH;
+
+    // entrada bar (verde)
+    ctx.fillStyle = '#3a9a78';
+    ctx.fillRect(x - barW - 1, pad.t + chartH - eH, barW, eH);
+    // saida bar (vermelho)
+    ctx.fillStyle = '#b84040';
+    ctx.fillRect(x + 1, pad.t + chartH - sH, barW, sH);
+
+    // month label
+    ctx.fillStyle = 'rgba(80,30,50,0.5)';
+    ctx.fillText(nomeMesShort(ms), x, H - 6);
+  });
+
+  // legend
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#3a9a78'; ctx.fillRect(pad.l, 4, 10, 8);
+  ctx.fillStyle = 'rgba(80,30,50,0.6)'; ctx.fillText('Entradas', pad.l+13, 12);
+  ctx.fillStyle = '#b84040'; ctx.fillRect(pad.l+70, 4, 10, 8);
+  ctx.fillStyle = 'rgba(80,30,50,0.6)'; ctx.fillText('Saídas', pad.l+83, 12);
+}
+
+function listenAnual() {
+  if (S.unsubAnual) S.unsubAnual();
+  const q = query(collection(db,'transparencia'), where('mes','>=',S.anoAtual+'-01'), where('mes','<=',S.anoAtual+'-12'));
+  S.unsubAnual = onSnapshot(q, snap => {
+    const todos = snap.docs.map(d=>({id:d.id,...d.data()}));
+    // Collect months with data
+    todos.forEach(t => { if(t.mes) mesesComDados.add(t.mes); });
+    atualizarSeletorMeses();
+    renderAnual(todos);
+    renderGrafico(todos);
+  });
+}
+
 // ── Init ──
 document.getElementById('footer-date').textContent=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
 document.getElementById('fin-ano').textContent=S.anoAtual;
@@ -1041,5 +1326,71 @@ document.getElementById('fax-hint').style.display='block';
     </div>
   </div>
 </div>
+
+<!-- MODAL EDITAR ESTOQUE -->
+<div class="overlay" id="modal-edit-est" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Editar item</div>
+    <input type="hidden" id="edit-est-id"/>
+    <div class="fld"><label class="flbl">Nome</label><input id="edit-est-nome" class="inp"/></div>
+    <div class="fld"><label class="flbl">Categoria</label><input id="edit-est-cat" class="inp" placeholder="Ex: Ritual, Limpeza…"/></div>
+    <div class="erow">
+      <div class="fld" style="flex:1"><label class="flbl">Qtd atual</label><input id="edit-est-qtd" class="inp" type="number" min="0" step="1"/></div>
+      <div class="fld" style="flex:1"><label class="flbl">Unidade</label><input id="edit-est-un" class="inp"/></div>
+      <div class="fld" style="flex:1"><label class="flbl">Mínimo</label><input id="edit-est-min" class="inp" type="number" min="0" step="1"/></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="document.getElementById('modal-edit-est').style.display='none'">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="saveEditEst()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PARTICIPAR FAXINA -->
+<div class="overlay" id="modal-fax-part" style="display:none">
+  <div class="modal">
+    <div class="modal-title" id="fax-part-titulo">Área</div>
+    <div class="modal-sub">Coloque seu nome e confirme sua presença</div>
+    <input type="hidden" id="fax-part-id"/>
+    <div class="fld"><label class="flbl">Seu nome</label><input id="fax-part-nome" class="inp" placeholder="Seu nome" maxlength="40"/></div>
+    <div class="fld"><label class="flbl">Sua confirmação</label>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="tt" id="fax-st-vai" onclick="setFaxSt('vai')">✅ Vou!</button>
+        <button class="tt" id="fax-st-talvez" onclick="setFaxSt('talvez')">🤔 Não sei</button>
+        <button class="tt" id="fax-st-nao" onclick="setFaxSt('nao')">❌ Não vou</button>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="document.getElementById('modal-fax-part').style.display='none'">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="confirmarFaxPart()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REGISTRAR FAXINA -->
+<div class="overlay" id="modal-reg-faxina" style="display:none">
+  <div class="modal">
+    <div class="modal-title">✅ Registrar Faxina</div>
+    <div class="modal-sub">Isso vai arquivar a faxina atual e resetar as áreas para a próxima</div>
+    <div class="fld"><label class="flbl">Data da faxina</label><input id="reg-fax-data" class="inp" type="date"/></div>
+    <div class="fld"><label class="flbl">Observações</label><input id="reg-fax-obs" class="inp" placeholder="Opcional"/></div>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="document.getElementById('modal-reg-faxina').style.display='none'">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="registrarFaxina()">Registrar e resetar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HISTÓRICO FAXINA -->
+<div class="overlay" id="modal-hist-faxina" style="display:none">
+  <div class="modal" style="width:380px;max-width:95vw">
+    <div class="modal-title">📋 Histórico de Faxinas</div>
+    <div id="hist-faxina-content" style="max-height:60vh;overflow-y:auto"></div>
+    <div class="modal-btns">
+      <button class="btn-p" style="flex:1" onclick="document.getElementById('modal-hist-faxina').style.display='none'">Fechar</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
