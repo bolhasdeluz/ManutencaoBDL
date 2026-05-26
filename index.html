@@ -876,7 +876,7 @@ function renderAll(){
 
 // ── CONTAS FIXAS ──
 const CONTAS_FIXAS = [
-  {id:'claro',  nome:'Claro NXT (Internet)',       val:105,   fixo:true},
+  {id:'claro',  nome:'Claro NXT (Internet)',        val:105,   fixo:true},
   {id:'ceee',   nome:'CEEE-D (Energia Elétrica)',  val:108.54,fixo:false},
   {id:'lm1',    nome:'LM Segurança',               val:707.5, fixo:false},
   {id:'lm2',    nome:'LM Segurança — Adicional',   val:200,   fixo:true},
@@ -907,15 +907,15 @@ function renderTambor() {
   const el = document.getElementById('tambor-content');
   const data = tamboresCache[S.mesAtual] || {};
   const qtd = parseInt(data.qtd||0);
-  if(!qtd) { el.innerHTML = '<span style="font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim)">A definir para este mês</span>'; return; }
+  if(!qtd) { el.innerHTML = `<span style="font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim)">A definir para este mês</span>`; return; }
   let html = '<div style="display:flex;gap:12px;flex-wrap:wrap">';
   for(let i=1;i<=qtd;i++) {
     const st = data['t'+i]||'';
     const cfg = TAMBOR_LABELS[st]||TAMBOR_LABELS[''];
-    html += '<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">'
-      + '<span style="font-size:20px">' + cfg.icon + '</span>'
-      + '<div><div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ' + i + '</div>'
-      + '<div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:' + cfg.cor + '">' + cfg.text + '</div></div></div>';
+    html += `<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">`
+      + `<span style="font-size:20px">${cfg.icon}</span>`
+      + `<div><div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ${i}</div>`
+      + `<div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:${cfg.cor}">${cfg.text}</div></div></div>`;
   }
   html += '</div>';
   el.innerHTML = html;
