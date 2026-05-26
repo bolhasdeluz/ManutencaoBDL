@@ -153,9 +153,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
 <div class="content">
 
-  <!-- MANUTENÇÃO -->
   <div class="panel active" id="panel-manut">
-    <!-- Próximo encontro -->
     <div id="encontro-card" class="encontro-card pendente">
       <div>
         <div class="encontro-label">🗓 Próximo encontro</div>
@@ -187,7 +185,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     <button id="manut-add-btn" class="add-box btn-add-f" style="display:none" onclick="showAddManut()">+ Adicionar tarefa</button>
   </div>
 
-  <!-- SUPRIMENTOS -->
   <div class="panel" id="panel-suprimentos">
     <div class="stats-row">
       <div class="stat-c" style="border-top:3px solid var(--red)">
@@ -243,9 +240,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
       onclick="this.style.display='none';document.getElementById('sup-add-box').style.display='block'">+ Adicionar item fixo ao estoque</button>
   </div>
 
-  <!-- FINANÇAS -->
   <div class="panel" id="panel-financas">
-    <!-- Tambor -->
     <div id="tambor-card" class="card" style="margin-bottom:16px;border-top:3px solid var(--gold)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)">🥁 Tambor do mês</span>
@@ -253,12 +248,10 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
       </div>
       <div id="tambor-content" style="font-family:'Crimson Pro',serif;font-style:italic;font-size:14px;color:var(--text-dim)">A definir</div>
     </div>
-    <!-- Mês selector + ações -->
     <div class="sel-row">
       <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)">Mês:</span>
       <select id="sel-mes" class="sel" onchange="onMesChange()"></select>
     </div>
-    <!-- Stats mês -->
     <div id="mae-box" class="mae-box" style="display:none">
       <div>
         <div class="mae-label">🙏 Cobertura Mãe de Santo</div>
@@ -280,21 +273,18 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
         <div class="stat-l">Saldo</div>
       </div>
     </div>
-    <!-- Botões de ação -->
     <div class="fin-btns-row">
       <button id="btn-fin-lancar" class="btn-p" style="display:none;font-size:10px;padding:6px 14px" onclick="toggleFinForm()">+ Lançar</button>
       <button id="btn-fixas" class="btn-p" style="display:none;font-size:10px;padding:6px 14px;background:var(--verde)" onclick="openFixasModal()">⚡ Fixas do mês</button>
       <button class="btn-ghost" style="font-size:10px;padding:6px 14px" onclick="openResumoAnual()">📊 Resumo 2026</button>
       <button class="btn-ghost" style="font-size:10px;padding:6px 14px" onclick="openGrafico()">📈 Gráfico</button>
     </div>
-    <!-- Formulário lançamento -->
     <div id="fin-form" style="display:none" class="card">
       <div class="tipo-tabs">
         <button id="tt-mens" class="tt e" onclick="setTipo('mensalidade')">↑ Mensalidade</button>
         <button id="tt-extra" class="tt" onclick="setTipo('extra')">↑ Extra</button>
         <button id="tt-saida" class="tt" onclick="setTipo('saida')">↓ Saída</button>
       </div>
-      <!-- Saída: conta predefinida -->
       <div id="fin-conta-row" class="fld" style="display:none">
         <label class="flbl">Conta</label>
         <select id="fin-conta" class="sel" style="width:100%" onchange="onContaChange()">
@@ -336,7 +326,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
 <footer class="footer">Bolhas de Luz · <span id="footer-date"></span></footer>
 
-<!-- MODAIS -->
 <div class="overlay" id="modal-login" style="display:none">
   <div class="modal">
     <div class="modal-title">🔐 Acesso Admin</div>
@@ -393,7 +382,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- Modal pedido avulso -->
 <div class="overlay" id="modal-avulso" style="display:none">
   <div class="modal">
     <div class="modal-title">🛒 Novo pedido avulso</div>
@@ -421,7 +409,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- Modal vou levar -->
 <div class="overlay" id="modal-vou-levar" style="display:none">
   <div class="modal">
     <div class="modal-title" id="vl-titulo">Item</div>
@@ -437,7 +424,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- Modal confirmar recebimento -->
 <div class="overlay" id="modal-recebido" style="display:none">
   <div class="modal">
     <div class="modal-title">✅ Confirmar recebimento</div>
@@ -453,7 +439,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- Modal editar item estoque -->
 <div class="overlay" id="modal-edit-sup" style="display:none">
   <div class="modal">
     <div class="modal-title">Editar item</div>
@@ -472,7 +457,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- Modal tambor -->
 <div class="overlay" id="modal-tambor" style="display:none">
   <div class="modal">
     <div class="modal-title">🥁 Tambor do Mês</div>
@@ -492,7 +476,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- Modal fixas -->
 <div class="overlay" id="modal-fixas" style="display:none">
   <div class="modal" style="width:360px;max-width:95vw">
     <div class="modal-title">⚡ Fixas do Mês</div>
@@ -505,7 +488,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- Modal resumo anual -->
 <div class="overlay" id="modal-resumo" style="display:none">
   <div class="modal modal-lg" style="max-height:90vh;overflow-y:auto">
     <div class="modal-title">📊 Resumo 2026</div>
@@ -516,7 +498,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- Modal gráfico -->
 <div class="overlay" id="modal-grafico" style="display:none">
   <div class="modal modal-lg">
     <div class="modal-title">📈 Fluxo 2026</div>
@@ -894,220 +875,4 @@ G.setTipo=function(t){
   S.finTipo=t;
   document.getElementById('tt-mens').className='tt'+(t==='mensalidade'?' e':'');
   document.getElementById('tt-extra').className='tt'+(t==='extra'?' ex':'');
-  document.getElementById('tt-saida').className='tt'+(t==='saida'?' s':'');
-  const isSaida=t==='saida';
-  document.getElementById('fin-conta-row').style.display=isSaida?'block':'none';
-  document.getElementById('fin-desc-lbl').textContent=isSaida?'Descrição / complemento':'Descrição';
-  if(!isSaida){document.getElementById('fin-conta').value='';}
-};
-G.onContaChange=function(){
-  const v=document.getElementById('fin-conta').value;
-  if(v&&v!=='Outro')document.getElementById('fin-desc').value=v;
-  else if(v==='Outro')document.getElementById('fin-desc').value='';
-};
-G.lancar=async function(){
-  let desc=document.getElementById('fin-desc').value.trim();
-  const val=parseFloat(document.getElementById('fin-val').value);
-  const data=document.getElementById('fin-data').value;
-  if(!val||val<=0){toast('Digite o valor',true);return;}
-  const t=S.finTipo;
-  const tipo=t==='saida'?'s':'e';
-  const subtipo=t==='saida'?'saida':t;
-  if(!desc){desc=t==='mensalidade'?'Mensalidade':t==='extra'?'Extra':'Saída';}
-  const btn=document.getElementById('btn-lancar');btn.disabled=true;
-  const mesLanc=data?data.substring(0,7):S.mesAtual;
-  try{
-    await addDoc(collection(db,'transparencia'),{desc,val,data:data||S.mesAtual+'-01',tipo,subtipo,mes:mesLanc,criadoEm:serverTimestamp()});
-    document.getElementById('fin-desc').value='';document.getElementById('fin-val').value='';
-    toast(tipo==='e'?'Entrada lançada!':'Saída lançada!');
-  }catch(e){toast('Erro: '+e.code,true);console.error(e);}
-  btn.disabled=false;
-};
-function renderFinancas(){
-  const el=document.getElementById('financas-content');
-  const entradas=S.transac.filter(i=>i.tipo==='e');
-  const saidas=S.transac.filter(i=>i.tipo==='s');
-  const mensalidades=entradas.filter(i=>i.subtipo==='mensalidade'||!i.subtipo);
-  const extras=entradas.filter(i=>i.subtipo==='extra');
-  const te=entradas.reduce((a,i)=>a+i.val,0);
-  const ts=saidas.reduce((a,i)=>a+i.val,0);
-  const sl=te-ts;
-  document.getElementById('fin-te').textContent=fmt(te);
-  document.getElementById('fin-ts').textContent=fmt(ts);
-  const slEl=document.getElementById('fin-sl');
-  const maeBox=document.getElementById('mae-box');
-  if(sl<0){
-    slEl.textContent='R$ 0,00';slEl.className='stat-n';slEl.style.color='var(--text-dim)';
-    maeBox.style.display='flex';
-    document.getElementById('mae-val').textContent=fmt(Math.abs(sl));
-  }else{
-    slEl.textContent=fmt(sl);slEl.className='stat-n';slEl.style.color='var(--verde)';
-    maeBox.style.display='none';
-  }
-  let html='';
-  // Entradas
-  if(entradas.length){
-    html+='<div class="section"><div class="sec-hd"><span class="sec-dot" style="background:var(--verde)"></span><span class="sec-lbl">Entradas</span><span class="sec-cnt">'+entradas.length+'</span></div>';
-    // Mensalidade: soma numa linha só
-    if(mensalidades.length){
-      const total=mensalidades.reduce((a,i)=>a+i.val,0);
-      html+='<div class="ti" style="background:var(--verde-claro);border-color:#b8ddd4"><div><div style="font-size:14px;font-weight:600">Mensalidades</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+mensalidades.length+' lançamento'+(mensalidades.length>1?'s':'')+' somados</div></div>'
-        +'<span class="ti-val e">+ '+fmt(total)+'</span></div>';
-    }
-    // Extras: individuais
-    extras.forEach(item=>{
-      html+='<div class="ti"><div><div style="font-size:14px;font-weight:500">'+item.desc+'</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+fmtData(item.data)+' · Extra</div></div>'
-        +'<div style="display:flex;align-items:center;gap:8px"><span class="ti-val e">+ '+fmt(item.val)+'</span>'
-        +(S.isAdmin?'<button class="bic bic-d" onclick="delTransac(\''+item.id+'\')">✕</button>':'')+'</div></div>';
-    });
-    html+='</div>';
-  }
-  // Saídas
-  if(saidas.length){
-    html+='<div class="section"><div class="sec-hd"><span class="sec-dot" style="background:var(--red)"></span><span class="sec-lbl">Saídas</span><span class="sec-cnt">'+saidas.length+'</span></div>';
-    saidas.forEach(item=>{
-      html+='<div class="ti"><div><div style="font-size:14px;font-weight:500">'+item.desc+'</div><div style="font-size:11px;color:var(--text-dim);margin-top:2px">'+fmtData(item.data)+'</div></div>'
-        +'<div style="display:flex;align-items:center;gap:8px"><span class="ti-val s">− '+fmt(item.val)+'</span>'
-        +(S.isAdmin?'<button class="bic bic-d" onclick="delTransac(\''+item.id+'\')">✕</button>':'')+'</div></div>';
-    });
-    html+='</div>';
-  }
-  if(!S.transac.length)html='<div class="empty">Nenhuma movimentação neste mês</div>';
-  el.innerHTML=html;
-}
-G.delTransac=async function(id){try{await deleteDoc(doc(db,'transparencia',id));toast('Removido');}catch(e){toast('Erro',true);}};
-
-// Resumo anual e gráfico em popup
-G.openResumoAnual=function(){
-  const modal=document.getElementById('modal-resumo');
-  const content=document.getElementById('resumo-content');
-  const todos=S.anualCache;
-  const hoje=mesHoje();
-  let html='<table style="width:100%;border-collapse:collapse;min-width:300px">';
-  html+='<thead><tr><th style="font-family:Cinzel,serif;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);padding:6px 8px;text-align:left;border-bottom:1px solid var(--border)">Mês</th><th style="font-family:Cinzel,serif;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);padding:6px 8px;text-align:right;border-bottom:1px solid var(--border)">Entradas</th><th style="font-family:Cinzel,serif;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);padding:6px 8px;text-align:right;border-bottom:1px solid var(--border)">Saídas</th><th style="font-family:Cinzel,serif;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);padding:6px 8px;text-align:right;border-bottom:1px solid var(--border)">Saldo</th></tr></thead><tbody>';
-  let totE=0,totS=0;
-  for(let m=1;m<=12;m++){
-    const ms=S.anoAtual+'-'+String(m).padStart(2,'0');
-    const items=todos.filter(i=>i.mes===ms);
-    const e=items.filter(i=>i.tipo==='e').reduce((a,i)=>a+i.val,0);
-    const s=items.filter(i=>i.tipo==='s').reduce((a,i)=>a+i.val,0);
-    const saldo=e-s;totE+=e;totS+=s;
-    const bg=ms===hoje?'background:var(--gold-dim)':'';
-    const sStr=saldo===0?'—':(saldo>0?'<span style="color:var(--verde)">+'+fmt(saldo)+'</span>':'<span style="color:var(--mae)">Mãe de Santo</span>');
-    html+='<tr style="'+bg+'"><td style="font-family:Crimson Pro,serif;font-size:14px;padding:7px 8px;border-bottom:1px solid var(--border)">'+nomeMesShort(ms)+(ms===hoje?' ●':'')+'</td>'
-      +'<td style="text-align:right;padding:7px 8px;border-bottom:1px solid var(--border)">'+(e>0?'<span style="color:var(--verde)">'+fmt(e)+'</span>':'<span style="color:var(--text-dim)">—</span>')+'</td>'
-      +'<td style="text-align:right;padding:7px 8px;border-bottom:1px solid var(--border)">'+(s>0?'<span style="color:var(--red)">'+fmt(s)+'</span>':'<span style="color:var(--text-dim)">—</span>')+'</td>'
-      +'<td style="text-align:right;padding:7px 8px;border-bottom:1px solid var(--border)">'+sStr+'</td></tr>';
-  }
-  const sc=totE-totS;
-  html+='</tbody><tfoot><tr style="font-weight:700;font-family:Cinzel,serif;font-size:11px"><td style="padding-top:10px;border-top:2px solid var(--border)">Total</td><td style="text-align:right;padding-top:10px;border-top:2px solid var(--border);color:var(--verde)">'+fmt(totE)+'</td><td style="text-align:right;padding-top:10px;border-top:2px solid var(--border);color:var(--red)">'+fmt(totS)+'</td><td style="text-align:right;padding-top:10px;border-top:2px solid var(--border);color:'+(sc>=0?'var(--verde)':'var(--mae)')+'">'+fmt(Math.abs(sc))+'</td></tr></tfoot></table>';
-  content.innerHTML=html;
-  modal.style.display='flex';
-};
-G.openGrafico=function(){
-  document.getElementById('modal-grafico').style.display='flex';
-  setTimeout(()=>{
-    const canvas=document.getElementById('fin-chart');
-    const todos=S.anualCache;
-    const ctx=canvas.getContext('2d');
-    canvas.width=canvas.offsetWidth||460;canvas.height=200;
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    const meses=[];for(let m=1;m<=12;m++)meses.push(S.anoAtual+'-'+String(m).padStart(2,'0'));
-    const entradas=meses.map(ms=>todos.filter(i=>i.mes===ms&&i.tipo==='e').reduce((a,i)=>a+i.val,0));
-    const saidas=meses.map(ms=>todos.filter(i=>i.mes===ms&&i.tipo==='s').reduce((a,i)=>a+i.val,0));
-    const maxVal=Math.max(...entradas,...saidas,1);
-    const W=canvas.width,H=canvas.height,pad={l:8,r:8,t:20,b:28};
-    const chartW=W-pad.l-pad.r,chartH=H-pad.t-pad.b,barW=chartW/12/2-3;
-    ctx.font='9px sans-serif';ctx.textAlign='center';
-    meses.forEach((ms,i)=>{
-      const x=pad.l+(chartW/12)*i+(chartW/12)/2;
-      const eH=(entradas[i]/maxVal)*chartH;const sH=(saidas[i]/maxVal)*chartH;
-      ctx.fillStyle='#3a9a78';ctx.fillRect(x-barW-1,pad.t+chartH-eH,barW,eH);
-      ctx.fillStyle='#b84040';ctx.fillRect(x+1,pad.t+chartH-sH,barW,sH);
-      ctx.fillStyle='rgba(80,30,50,0.5)';ctx.fillText(nomeMesShort(ms),x,H-6);
-    });
-    ctx.textAlign='left';
-    ctx.fillStyle='#3a9a78';ctx.fillRect(pad.l,6,10,8);ctx.fillStyle='rgba(80,30,50,0.6)';ctx.fillText('Entradas',pad.l+13,14);
-    ctx.fillStyle='#b84040';ctx.fillRect(pad.l+70,6,10,8);ctx.fillStyle='rgba(80,30,50,0.6)';ctx.fillText('Saídas',pad.l+83,14);
-  },100);
-};
-
-// ── TAMBOR ──
-let tamboresCache={};
-function listenTambor(){onSnapshot(collection(db,'tambor'),snap=>{tamboresCache={};snap.docs.forEach(d=>{tamboresCache[d.id]=d.data();});renderTambor();},e=>console.error('tambor:',e));}
-const TAMBOR_LABELS={teremos:{icon:'✅',text:'Teremos',cor:'var(--verde)'},nao:{icon:'❌',text:'Não teremos',cor:'var(--red)'},vaquinha:{icon:'🤝',text:'Depende de vaquinha',cor:'var(--ambar)'},'': {icon:'❓',text:'A definir',cor:'var(--text-dim)'}};
-function renderTambor(){
-  const el=document.getElementById('tambor-content');const data=tamboresCache[S.mesAtual]||{};const qtd=parseInt(data.qtd||0);
-  if(!qtd){el.innerHTML='<span style="font-family:\'Crimson Pro\',serif;font-style:italic;color:var(--text-dim)">A definir para este mês</span>';return;}
-  let html='<div style="display:flex;gap:12px;flex-wrap:wrap">';
-  for(let i=1;i<=qtd;i++){const st=data['t'+i]||'';const cfg=TAMBOR_LABELS[st]||TAMBOR_LABELS[''];html+='<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px"><span style="font-size:20px">'+cfg.icon+'</span><div><div style="font-family:\'Cinzel\',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor '+i+'</div><div style="font-family:\'Playfair Display\',serif;font-size:14px;font-weight:600;color:'+cfg.cor+'">'+cfg.text+'</div></div></div>';}
-  html+='</div>';el.innerHTML=html;
-}
-G.renderTamborFields=function(){const qtd=parseInt(document.getElementById('tambor-qtd').value);let html='';for(let i=1;i<=qtd;i++){const cur=(tamboresCache[S.mesAtual]||{})['t'+i]||'';html+='<div class="fld"><label class="flbl">Tambor '+i+'</label><select id="tambor-st-'+i+'" class="sel" style="width:100%">'+Object.entries(TAMBOR_LABELS).map(([v,c])=>'<option value="'+v+'"'+(v===cur?' selected':'')+'>'+c.icon+' '+c.text+'</option>').join('')+'</select></div>';}document.getElementById('tambor-fields').innerHTML=html;};
-G.openTamborModal=function(){const data=tamboresCache[S.mesAtual]||{};document.getElementById('tambor-qtd').value=data.qtd||'0';G.renderTamborFields();document.getElementById('tambor-modal-sub').textContent='Mês: '+nomeMes(S.mesAtual);document.getElementById('modal-tambor').style.display='flex';};
-G.saveTambor=async function(){const qtd=parseInt(document.getElementById('tambor-qtd').value);const update={qtd,mes:S.mesAtual};for(let i=1;i<=qtd;i++){const el=document.getElementById('tambor-st-'+i);if(el)update['t'+i]=el.value;}try{await setDoc(doc(db,'tambor',S.mesAtual),update);document.getElementById('modal-tambor').style.display='none';toast('Tambor salvo ✓');}catch(e){toast('Erro: '+e.code,true);}};
-
-// ── CONTAS FIXAS ──
-const CONTAS_FIXAS=[{id:'claro',nome:'Claro NXT (Internet)',val:105,fixo:true},{id:'ceee',nome:'CEEE-D (Energia Elétrica)',val:108.54,fixo:false},{id:'lm1',nome:'LM Segurança',val:707.5,fixo:false},{id:'lm2',nome:'LM Segurança — Adicional',val:200,fixo:true},{id:'dmae',nome:'DMAE (Água/Esgoto)',val:37,fixo:false},{id:'pref',nome:'Prefeitura Porto Alegre',val:58.13,fixo:true},{id:'sonica',nome:'Sônica e Marco',val:670,fixo:false}];
-G.openFixasModal=function(){
-  document.getElementById('fixas-mes-lbl').textContent='Mês: '+nomeMes(S.mesAtual);
-  let html='';CONTAS_FIXAS.forEach(c=>{html+='<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)"><input type="checkbox" id="fix-cb-'+c.id+'" checked style="width:18px;height:18px;cursor:pointer;accent-color:var(--gold)"/><div style="flex:1"><div style="font-family:\'Playfair Display\',serif;font-size:14px;font-weight:600">'+c.nome+'</div><div style="font-size:11px;font-family:\'Cinzel\',serif;color:var(--text-dim);letter-spacing:.05em">'+(c.fixo?'valor típico':'variável — confirme')+'</div></div><input type="number" id="fix-val-'+c.id+'" value="'+c.val+'" step="0.01" min="0" style="width:90px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:\'Crimson Pro\',serif;font-size:14px;text-align:right"/></div>';});
-  document.getElementById('fixas-list').innerHTML=html;document.getElementById('modal-fixas').style.display='flex';
-};
-G.lancarFixas=async function(){
-  const btn=document.getElementById('btn-confirmar-fixas');btn.disabled=true;
-  const today=new Date().toISOString().split('T')[0];const promises=[];
-  CONTAS_FIXAS.forEach(c=>{const cb=document.getElementById('fix-cb-'+c.id);const vEl=document.getElementById('fix-val-'+c.id);if(!cb||!cb.checked)return;const val=parseFloat(vEl.value);if(!val||val<=0)return;promises.push(addDoc(collection(db,'transparencia'),{desc:c.nome,val,data:today,tipo:'s',subtipo:'saida',mes:S.mesAtual,criadoEm:serverTimestamp()}));});
-  try{await Promise.all(promises);document.getElementById('modal-fixas').style.display='none';toast(promises.length+' lançamentos criados ✓');}catch(e){toast('Erro: '+e.code,true);}
-  btn.disabled=false;
-};
-
-// ── Firebase listeners ──
-// ── listener único para transparencia — sem index ──
-let _unsubTransac=null;
-let _todosTransac=[];
-function listenTransac(){
-  if(_unsubTransac)_unsubTransac();
-  _unsubTransac=onSnapshot(collection(db,'transparencia'),
-    snap=>{
-      _todosTransac=snap.docs.map(d=>({id:d.id,...d.data()}));
-      // atualiza cache anual
-      S.anualCache=_todosTransac.filter(t=>t.mes&&t.mes.startsWith(String(S.anoAtual)));
-      S.anualCache.forEach(t=>{if(t.mes)mesesComDados.add(t.mes);});
-      atualizarSeletorMeses();
-      // atualiza mês selecionado
-      S.transac=_todosTransac.filter(t=>t.mes===S.mesAtual)
-        .sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
-      renderFinancas();renderTambor();
-    },
-    e=>console.error('transparencia:',e.code,e.message)
-  );
-}
-function listenMes(){/* usa _todosTransac em cache */}
-function listenAnual(){/* usa _todosTransac em cache */}
-function initListeners(){
-  onSnapshot(query(collection(db,'manutencao'),orderBy('criadoEm','desc')),
-    snap=>{S.manut=snap.docs.map(d=>({id:d.id,...d.data()}));renderManut();},
-    e=>{ console.error('manutencao:',e.code); toast('Erro ao carregar manutenção: '+e.code,true); }
-  );
-  onSnapshot(query(collection(db,'estoque'),orderBy('criadoEm','asc')),
-    snap=>{S.estoque=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();},
-    e=>console.error('estoque:',e.code)
-  );
-  onSnapshot(query(collection(db,'lista_compras'),orderBy('criadoEm','desc')),
-    snap=>{S.avulsos=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();},
-    e=>console.error('lista_compras:',e.code)
-  );
-  listenTransac();listenTambor();listenEncontro();
-}
-function renderAll(){renderManut();renderSuprimentos();renderFinancas();renderTambor();}
-
-// ── Init ──
-document.getElementById('footer-date').textContent=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-document.getElementById('fin-ano').textContent=S.anoAtual;
-document.getElementById('fin-data').value=new Date().toISOString().split('T')[0];
-preencherMeses();
-initListeners();
-</script>
-</body>
-</html>
+  document.getElementById('tt-saida').className='tt'+(t==='saida'?' s':'
