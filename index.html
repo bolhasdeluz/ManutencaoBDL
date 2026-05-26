@@ -658,10 +658,15 @@ function renderSuprimentos(){
     if(item.cat)html+='<span class="sup-cat">'+item.cat+'</span>';
     if(st!=='ok')html+='<span style="font-family:\'Cinzel\',serif;font-size:9px;color:var(--text-dim)">mín: '+min+' '+un+'</span>';
     html+='</div></div>';
-    html+='<div style="display:flex;gap:5px;flex-shrink:0">';
+    html+='<div style="display:flex;gap:5px;flex-shrink:0;align-items:center">';
     if(st!=='ok')html+='<button class="btn-vou" onclick="openVouLevar(\''+item.id+'\',\'est\')" style="font-size:11px;padding:5px 10px">Vou levar</button>';
+    html+='<div style="display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden">'
+      +'<button onclick="ajustarQtd(\''+item.id+'\', -1)" style="padding:4px 9px;border:none;background:'+(qtd<=0?'var(--red-dim)':'var(--gold-dim)')+';cursor:pointer;font-size:15px;font-weight:700;color:'+(qtd<=0?'var(--red)':'var(--gold)')+'">−</button>'
+      +'<span style="padding:4px 8px;font-family:Cinzel,serif;font-size:11px;font-weight:700;color:'+cor+';background:#fff;min-width:28px;text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border)">'+qtd+'</span>'
+      +'<button onclick="ajustarQtd(\''+item.id+'\', 1)" style="padding:4px 9px;border:none;background:var(--gold-dim);cursor:pointer;font-size:15px;font-weight:700;color:var(--gold)">+</button>'
+      +'</div>';
     if(S.isAdmin){
-      if(st!=='ok'&&promessas.length>0)html+='<button class="bic bic-e" onclick="openRecebido(\''+item.id+'\')" title="Confirmar recebimento">📥</button>';
+      if(st!=='ok'&&promessas.length>0)html+='<button class="bic bic-e" onclick="openRecebido(\''+item.id+'\')">📥</button>';
       html+='<button class="bic bic-e" onclick="openEditSup(\''+item.id+'\')">✏️</button>';
       html+='<button class="bic bic-d" onclick="delSup(\''+item.id+'\')">🗑️</button>';
     }
@@ -760,6 +765,12 @@ G.saveEditSup=async function(){
   try{await updateDoc(doc(db,'estoque',id),{nome,cat:document.getElementById('edit-sup-cat').value.trim()||'Outros',qtd,un:document.getElementById('edit-sup-un').value.trim()||'un',min});document.getElementById('modal-edit-sup').style.display='none';toast('Salvo ✓');}catch(e){toast('Erro',true);}
 };
 G.delSup=async function(id){try{await deleteDoc(doc(db,'estoque',id));toast('Removido');}catch(e){toast('Erro',true);}};
+G.ajustarQtd=async function(id,delta){const item=S.estoque.find(x=>x.id===id);if(!item)return;const nova=Math.max(0,(item.qtd??0)+delta);try{await updateDoc(doc(db,'estoque',id),{qtd:nova});}catch(e){toast('Erro',true);}};
+G.ajustarQtd=async function(id,delta){
+  const item=S.estoque.find(x=>x.id===id);if(!item)return;
+  const nova=Math.max(0,(item.qtd??0)+delta);
+  try{await updateDoc(doc(db,'estoque',id),{qtd:nova});}catch(e){toast('Erro',true);}
+};
 
 // vou levar (estoque fixo e avulsos)
 G.openVouLevar=function(id,tipo){
