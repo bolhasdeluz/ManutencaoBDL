@@ -154,7 +154,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 </div>
 
 <div class="content">
-  <!-- MANUTENÇÃO -->
   <div class="panel active" id="panel-manut">
     <div id="manut-content"><div class="load">Carregando…</div></div>
     <div id="manut-add-box" class="add-box" style="display:none">
@@ -178,7 +177,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     <button id="manut-add-btn" class="add-box btn-add-f" style="display:none" onclick="showAddManut()">+ Adicionar tarefa</button>
   </div>
 
-  <!-- ESTOQUE -->
   <div class="panel" id="panel-estoque">
     <div class="stats-row">
       <div class="stat-c" style="border-top:3px solid var(--verde)">
@@ -216,7 +214,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     <button id="estoque-add-btn" class="add-box btn-add-f" style="display:none" onclick="showAddEst()">+ Adicionar item</button>
   </div>
 
-  <!-- FAXINA -->
   <div class="panel" id="panel-faxina">
     <div class="prog-box">
       <div class="prog-top">
@@ -242,7 +239,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     <div id="fax-hint" class="hint" style="display:none">Coloque seu nome nas áreas que você vai ajudar a limpar</div>
   </div>
 
-  <!-- COMPRAS -->
   <div class="panel" id="panel-compras">
     <div class="card" style="margin-bottom:20px">
       <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:12px">+ Adicionar item</div>
@@ -265,7 +261,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     <div id="compras-content"><div class="load">Carregando…</div></div>
   </div>
 
-  <!-- FINANÇAS -->
   <div class="panel" id="panel-financas">
     <div class="anual-wrap" id="anual-wrap-chart">
       <div class="anual-lbl">Resumo <span id="fin-ano"></span></div>
@@ -299,7 +294,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
       </div>
       <div style="text-align:right"><button class="btn-p" id="btn-lancar" onclick="lancar()">Lançar</button></div>
     </div>
-    <!-- TAMBOR -->
     <div id="tambor-card" class="card" style="margin-bottom:16px;border-top:3px solid var(--gold)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)">🥁 Tambor do mês</span>
@@ -313,7 +307,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
 <footer class="footer">Bolhas de Luz · <span id="footer-date"></span></footer>
 
-<!-- MODAL LOGIN -->
 <div class="overlay" id="modal-login" style="display:none">
   <div class="modal">
     <div class="modal-title">🔐 Acesso Admin</div>
@@ -327,7 +320,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- MODAL EDITAR TAREFA -->
 <div class="overlay" id="modal-edit-manut" style="display:none">
   <div class="modal">
     <div class="modal-title">Editar tarefa</div>
@@ -349,7 +341,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
-<!-- MODAL VOU TRAZER -->
 <div class="overlay" id="modal-compra" style="display:none">
   <div class="modal">
     <div class="modal-title">Quanto você vai trazer?</div>
@@ -571,10 +562,6 @@ G.delManut = async function(id) {
   try { await deleteDoc(doc(db,'manutencao',id)); toast('Removida'); } catch(e){ toast('Erro',true); }
 };
 
-// ── ESTOQUE v2 ── (replaced below)
-
-// ── FAXINA v2 ── (replaced below)
-
 // ── COMPRAS ──
 function renderCompras() {
   const el = document.getElementById('compras-content');
@@ -683,7 +670,6 @@ G.delComprador = async function(id,idx){
   try{await updateDoc(doc(db,'lista_compras',id),{compradores:novos});}catch(e){toast('Erro',true);}
 };
 
-// ── FINANÇAS v2 ── (replaced below)
 G.onMesChange = function(){S.mesAtual=document.getElementById('sel-mes').value;listenMes();};
 G.toggleFinEdit = function(){S.finEdit=!S.finEdit;document.getElementById('fin-form').style.display=S.finEdit?'block':'none';};
 G.setTipo = function(t){
@@ -780,7 +766,6 @@ function listenMes(){
   const q=query(collection(db,'transparencia'),where('mes','==',S.mesAtual),orderBy('criadoEm','desc'));
   S.unsubMes=onSnapshot(q,snap=>{S.transac=snap.docs.map(d=>({id:d.id,...d.data()}));renderFinancas();});
 }
-// listenAnual v2 below
 function initListeners(){
   onSnapshot(query(collection(db,'manutencao'),orderBy('criadoEm','desc')),snap=>{
     S.manut=snap.docs.map(d=>({id:d.id,...d.data()}));renderManut();
@@ -805,7 +790,7 @@ function renderAll(){
 
 // ── CONTAS FIXAS ──
 const CONTAS_FIXAS = [
-  {id:'claro',  nome:'Claro NXT (Internet)',       val:105,   fixo:true},
+  {id:'claro',  nome:'Claro NXT (Internet)',        val:105,   fixo:true},
   {id:'ceee',   nome:'CEEE-D (Energia Elétrica)',  val:108.54,fixo:false},
   {id:'lm1',    nome:'LM Segurança',               val:707.5, fixo:false},
   {id:'lm2',    nome:'LM Segurança — Adicional',   val:200,   fixo:true},
@@ -832,19 +817,20 @@ function listenTambor() {
   });
 }
 
+// CORREÇÃO AQUI (crases)
 function renderTambor() {
   const el = document.getElementById('tambor-content');
   const data = tamboresCache[S.mesAtual] || {};
   const qtd = parseInt(data.qtd||0);
-  if(!qtd) { el.innerHTML = '<span style="font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim)">A definir para este mês</span>'; return; }
+  if(!qtd) { el.innerHTML = `<span style="font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim)">A definir para este mês</span>`; return; }
   let html = '<div style="display:flex;gap:12px;flex-wrap:wrap">';
   for(let i=1;i<=qtd;i++) {
     const st = data['t'+i]||'';
     const cfg = TAMBOR_LABELS[st]||TAMBOR_LABELS[''];
-    html += '<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">'
-      + '<span style="font-size:20px">' + cfg.icon + '</span>'
-      + '<div><div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ' + i + '</div>'
-      + '<div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:' + cfg.cor + '">' + cfg.text + '</div></div></div>';
+    html += `<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">`
+      + `<span style="font-size:20px">${cfg.icon}</span>`
+      + `<div><div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ${i}</div>`
+      + `<div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:${cfg.cor}">${cfg.text}</div></div></div>`;
   }
   html += '</div>';
   el.innerHTML = html;
@@ -1293,7 +1279,6 @@ initListeners();
 document.getElementById('fax-hint').style.display='block';
 </script>
 
-<!-- MODAL TAMBOR -->
 <div class="overlay" id="modal-tambor" style="display:none">
   <div class="modal">
     <div class="modal-title">🥁 Tambor do Mês</div>
@@ -1314,7 +1299,6 @@ document.getElementById('fax-hint').style.display='block';
   </div>
 </div>
 
-<!-- MODAL FIXAS -->
 <div class="overlay" id="modal-fixas" style="display:none">
   <div class="modal" style="width:360px;max-width:95vw">
     <div class="modal-title">⚡ Fixas do Mês</div>
@@ -1327,7 +1311,6 @@ document.getElementById('fax-hint').style.display='block';
   </div>
 </div>
 
-<!-- MODAL EDITAR ESTOQUE -->
 <div class="overlay" id="modal-edit-est" style="display:none">
   <div class="modal">
     <div class="modal-title">Editar item</div>
@@ -1346,7 +1329,6 @@ document.getElementById('fax-hint').style.display='block';
   </div>
 </div>
 
-<!-- MODAL PARTICIPAR FAXINA -->
 <div class="overlay" id="modal-fax-part" style="display:none">
   <div class="modal">
     <div class="modal-title" id="fax-part-titulo">Área</div>
@@ -1367,7 +1349,6 @@ document.getElementById('fax-hint').style.display='block';
   </div>
 </div>
 
-<!-- MODAL REGISTRAR FAXINA -->
 <div class="overlay" id="modal-reg-faxina" style="display:none">
   <div class="modal">
     <div class="modal-title">✅ Registrar Faxina</div>
@@ -1381,7 +1362,6 @@ document.getElementById('fax-hint').style.display='block';
   </div>
 </div>
 
-<!-- MODAL HISTÓRICO FAXINA -->
 <div class="overlay" id="modal-hist-faxina" style="display:none">
   <div class="modal" style="width:380px;max-width:95vw">
     <div class="modal-title">📋 Histórico de Faxinas</div>
