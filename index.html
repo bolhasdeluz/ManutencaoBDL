@@ -883,7 +883,12 @@ G.delAvulso=async function(id){try{await deleteDoc(doc(db,'lista_compras',id));t
 let mesesComDados=new Set();
 function preencherMeses(){const sel=document.getElementById('sel-mes');const hoje=new Date();S.mesAtual=hoje.getFullYear()+'-'+String(hoje.getMonth()+1).padStart(2,'0');sel.innerHTML='<option value="'+S.mesAtual+'">'+nomeMes(S.mesAtual)+'</option>';}
 function atualizarSeletorMeses(){const sel=document.getElementById('sel-mes');const cur=sel.value||S.mesAtual;const meses=[...mesesComDados].sort().reverse();if(!meses.includes(cur))meses.unshift(cur);sel.innerHTML=meses.map(m=>'<option value="'+m+'"'+(m===cur?' selected':'')+'>'+nomeMes(m)+'</option>').join('');S.mesAtual=sel.value;}
-G.onMesChange=function(){S.mesAtual=document.getElementById('sel-mes').value;listenMes();};
+G.onMesChange=function(){
+  S.mesAtual=document.getElementById('sel-mes').value;
+  S.transac=_todosTransac.filter(t=>t.mes===S.mesAtual)
+    .sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
+  renderFinancas();renderTambor();
+};
 G.toggleFinForm=function(){S.finEdit=!S.finEdit;document.getElementById('fin-form').style.display=S.finEdit?'block':'none';};
 G.setTipo=function(t){
   S.finTipo=t;
@@ -1058,38 +1063,42 @@ G.lancarFixas=async function(){
 };
 
 // ── Firebase listeners ──
-function listenMes(){
-  if(S.unsubMes)S.unsubMes();
-  const q=query(collection(db,'transparencia'),where('mes','==',S.mesAtual));
-  S.unsubMes=onSnapshot(q,
-    snap=>{S.transac=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));renderFinancas();renderTambor();},
-    e=>{console.error('transparencia/mes:',e.code,e.message);if(e.code==='failed-precondition')toast('Crie o índice no Firebase Console (F12 para ver link)',true);}
+// ── listener único para transparencia — sem index ──
+let _unsubTransac=null;
+let _todosTransac=[];
+function listenTransac(){
+  if(_unsubTransac)_unsubTransac();
+  _unsubTransac=onSnapshot(collection(db,'transparencia'),
+    snap=>{
+      _todosTransac=snap.docs.map(d=>({id:d.id,...d.data()}));
+      // atualiza cache anual
+      S.anualCache=_todosTransac.filter(t=>t.mes&&t.mes.startsWith(String(S.anoAtual)));
+      S.anualCache.forEach(t=>{if(t.mes)mesesComDados.add(t.mes);});
+      atualizarSeletorMeses();
+      // atualiza mês selecionado
+      S.transac=_todosTransac.filter(t=>t.mes===S.mesAtual)
+        .sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
+      renderFinancas();renderTambor();
+    },
+    e=>console.error('transparencia:',e.code,e.message)
   );
 }
-function listenAnual(){
-  if(S.unsubAnual)S.unsubAnual();
-  const q=query(collection(db,'transparencia'),where('mes','>=',S.anoAtual+'-01'),where('mes','<=',S.anoAtual+'-12'));
-  S.unsubAnual=onSnapshot(q,snap=>{
-    const todos=snap.docs.map(d=>({id:d.id,...d.data()}));
-    S.anualCache=todos;
-    todos.forEach(t=>{if(t.mes)mesesComDados.add(t.mes);});
-    atualizarSeletorMeses();
-  },e=>console.error('transparencia/anual:',e));
-}
+function listenMes(){/* usa _todosTransac em cache */}
+function listenAnual(){/* usa _todosTransac em cache */}
 function initListeners(){
-  onSnapshot(collection(db,'manutencao'),
-    snap=>{S.manut=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));renderManut();},
+  onSnapshot(query(collection(db,'manutencao'),orderBy('criadoEm','desc')),
+    snap=>{S.manut=snap.docs.map(d=>({id:d.id,...d.data()}));renderManut();},
     e=>{ console.error('manutencao:',e.code); toast('Erro ao carregar manutenção: '+e.code,true); }
   );
-  onSnapshot(collection(db,'estoque'),
-    snap=>{S.estoque=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.criadoEm?.seconds||0)-(b.criadoEm?.seconds||0));renderSuprimentos();},
+  onSnapshot(query(collection(db,'estoque'),orderBy('criadoEm','asc')),
+    snap=>{S.estoque=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();},
     e=>console.error('estoque:',e.code)
   );
-  onSnapshot(collection(db,'lista_compras'),
-    snap=>{S.avulsos=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));renderSuprimentos();},
+  onSnapshot(query(collection(db,'lista_compras'),orderBy('criadoEm','desc')),
+    snap=>{S.avulsos=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();},
     e=>console.error('lista_compras:',e.code)
   );
-  listenMes();listenAnual();listenTambor();listenEncontro();
+  listenTransac();listenTambor();listenEncontro();
 }
 function renderAll(){renderManut();renderSuprimentos();renderFinancas();renderTambor();}
 
