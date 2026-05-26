@@ -666,7 +666,7 @@ function renderCompras() {
             <div style="font-size:11px;color:var(--text-dim)">pedido por ${item.autor}</div>
           </div>
           <div class="card-acts">
-            ${est!=='completo'?`<button class="btn-vou" onclick="openCompraModal('${item.id}')">Vou trazer${est==='parcial'?' mais':''}</button>`:'<span style="color:var(--verde);font-family:Cinzel,serif;font-size:11px;font-weight:700">✓ Completo</span>'}
+            ${est!=='completo'?`<button class="btn-vou" onclick="openCompraModal('${item.id}')">Vou trazer${est==='parcial'?' mais':''}</button>`:'<span style="color:var(--verde);font-family:'Cinzel',serif;font-size:11px;font-weight:700">✓ Completo</span>'}
             <button class="bic bic-d" onclick="delCompra('${item.id}')">🗑️</button>
           </div>
         </div>
@@ -907,8 +907,8 @@ function renderTambor() {
     const cfg = TAMBOR_LABELS[st]||TAMBOR_LABELS[''];
     html += '<div style="display:flex;align-items:center;gap:8px;background:var(--gold-dim);border-radius:10px;padding:10px 14px;flex:1;min-width:120px">'
       + '<span style="font-size:20px">' + cfg.icon + '</span>'
-      + '<div><div style="font-family:Cinzel,serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ' + i + '</div>'
-      + '<div style="font-family:Playfair Display,serif;font-size:14px;font-weight:600;color:' + cfg.cor + '">' + cfg.text + '</div></div></div>';
+      + '<div><div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)">Tambor ' + i + '</div>'
+      + '<div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:' + cfg.cor + '">' + cfg.text + '</div></div></div>';
   }
   html += '</div>';
   el.innerHTML = html;
