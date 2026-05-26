@@ -123,8 +123,10 @@ window.runSeed = async function() {
       log('✓ ' + item.mes + ' — ' + item.desc + '  R$ ' + item.val);
       ok++;
     } catch(e) {
-      log('✗ Erro: ' + item.desc + ' — ' + e.message, 'err');
+      log('✗ ERRO: ' + e.code + ' — ' + e.message, 'err');
+      log('   item: ' + item.desc + ' / mes: ' + item.mes, 'err');
       err++;
+      if(err >= 2) { log('🛑 Abortando — verifique o erro acima.', 'err'); break; }
     }
     await new Promise(r => setTimeout(r, 120));
   }
