@@ -988,13 +988,41 @@ G.lancarFixas=async function(){
 };
 
 // ── Firebase listeners ──
-function listenMes(){if(S.unsubMes)S.unsubMes();const q=query(collection(db,'transparencia'),where('mes','==',S.mesAtual),orderBy('criadoEm','desc'));S.unsubMes=onSnapshot(q,snap=>{S.transac=snap.docs.map(d=>({id:d.id,...d.data()}));renderFinancas();});}
+function listenMes(){
+  if(S.unsubMes)S.unsubMes();
+  const q=query(collection(db,'transparencia'),where('mes','==',S.mesAtual),orderBy('criadoEm','desc'));
+  S.unsubMes=onSnapshot(q,
+    snap=>{S.transac=snap.docs.map(d=>({id:d.id,...d.data()}));renderFinancas();},
+    e=>{
+      console.error('Firestore error [transparencia/mes]:', e);
+      // Se falta índice, o erro traz um link — mostra no console
+      if(e.code==='failed-precondition'||e.message.includes('index')){
+        toast('Falta índice no Firestore — veja o console (F12)',true);
+        console.error('Crie o índice em: https://console.firebase.google.com/project/terreiro-bolhas-de-luz/firestore/indexes');
+      } else {
+        toast('Erro finanças: '+e.code,true);
+      }
+    }
+  );
+}
 function listenAnual(){if(S.unsubAnual)S.unsubAnual();const q=query(collection(db,'transparencia'),where('mes','>=',S.anoAtual+'-01'),where('mes','<=',S.anoAtual+'-12'));S.unsubAnual=onSnapshot(q,snap=>{const todos=snap.docs.map(d=>({id:d.id,...d.data()}));todos.forEach(t=>{if(t.mes)mesesComDados.add(t.mes);});atualizarSeletorMeses();renderAnual(todos);renderGrafico(todos);});}
+function snapErr(col,e){
+  console.error('Firestore error ['+col+']:', e.code, e.message);
+  toast('Erro '+col+': '+e.code,true);
+}
 function initListeners(){
-  onSnapshot(query(collection(db,'manutencao'),orderBy('criadoEm','desc')),snap=>{S.manut=snap.docs.map(d=>({id:d.id,...d.data()}));renderManut();});
-  onSnapshot(query(collection(db,'estoque'),orderBy('criadoEm','desc')),snap=>{S.estoque=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();});
-  onSnapshot(query(collection(db,'faxina'),orderBy('criadoEm','asc')),snap=>{S.faxina=snap.docs.map(d=>({id:d.id,...d.data()}));renderFaxina();});
-  onSnapshot(query(collection(db,'lista_compras'),orderBy('criadoEm','desc')),snap=>{S.avulsos=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();});
+  onSnapshot(query(collection(db,'manutencao'),orderBy('criadoEm','desc')),
+    snap=>{S.manut=snap.docs.map(d=>({id:d.id,...d.data()}));renderManut();},
+    e=>snapErr('manutencao',e));
+  onSnapshot(query(collection(db,'estoque'),orderBy('criadoEm','desc')),
+    snap=>{S.estoque=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();},
+    e=>snapErr('estoque',e));
+  onSnapshot(query(collection(db,'faxina'),orderBy('criadoEm','asc')),
+    snap=>{S.faxina=snap.docs.map(d=>({id:d.id,...d.data()}));renderFaxina();},
+    e=>snapErr('faxina',e));
+  onSnapshot(query(collection(db,'lista_compras'),orderBy('criadoEm','desc')),
+    snap=>{S.avulsos=snap.docs.map(d=>({id:d.id,...d.data()}));renderSuprimentos();},
+    e=>snapErr('lista_compras',e));
   listenMes();listenAnual();listenTambor();
 }
 function renderAll(){renderManut();renderSuprimentos();renderFaxina();renderFinancas();}
