@@ -283,13 +283,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
       <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)">Mês:</span>
       <select id="sel-mes" class="sel" onchange="renderFinancas()"></select>
     </div>
-    <div id="mae-box" class="mae-box" style="display:none">
-      <div>
-        <div class="mae-label">🙏 Cobertura Mãe de Santo</div>
-        <div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:12px;color:var(--mae);margin-top:1px">Com gratidão pelo cuidado com a casa</div>
-      </div>
-      <div class="mae-val" id="mae-val">–</div>
-    </div>
+
     <div class="stats-row">
       <div class="stat-c" style="border-top:3px solid var(--verde)">
         <div class="stat-n" id="fin-te" style="color:var(--verde)">–</div>
@@ -299,9 +293,9 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
         <div class="stat-n" id="fin-ts" style="color:var(--red)">–</div>
         <div class="stat-l">Saídas</div>
       </div>
-      <div class="stat-c">
+      <div class="stat-c" id="saldo-card" style="transition:all .3s">
         <div class="stat-n" id="fin-sl">–</div>
-        <div class="stat-l">Saldo</div>
+        <div class="stat-l" id="saldo-label">Saldo</div>
       </div>
     </div>
     <div class="fin-btns-row">
@@ -1106,13 +1100,25 @@ function renderFinancas(){
   document.getElementById('fin-te').textContent=fmt(totalE);
   document.getElementById('fin-ts').textContent=fmt(totalS);
   const slEl=document.getElementById('fin-sl');
+  const saldoCard=document.getElementById('saldo-card');
+  const saldoLbl=document.getElementById('saldo-label');
   slEl.textContent=fmt(Math.abs(saldo));
-  slEl.style.color=saldo>=0?'var(--verde)':'var(--red)';
-
-  // mae de santo
-  const maeBox=document.getElementById('mae-box');
-  if(saldo<0){ maeBox.style.display='flex'; document.getElementById('mae-val').textContent=fmt(Math.abs(saldo)); }
-  else { maeBox.style.display='none'; }
+  if(saldo<0){
+    slEl.style.color='var(--mae)';
+    saldoCard.style.borderTop='3px solid var(--mae)';
+    saldoCard.style.background='var(--mae-claro)';
+    saldoLbl.textContent='Amparo';
+  } else if(saldo>0){
+    slEl.style.color='var(--verde)';
+    saldoCard.style.borderTop='3px solid var(--verde)';
+    saldoCard.style.background='';
+    saldoLbl.textContent='Extra';
+  } else {
+    slEl.style.color='var(--text-dim)';
+    saldoCard.style.borderTop='3px solid var(--border)';
+    saldoCard.style.background='';
+    saldoLbl.textContent='Saldo';
+  }
 
   // render list
   const mens=filtered.filter(l=>l.tipo==='mensalidade');
