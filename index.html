@@ -188,6 +188,29 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
 .footer{text-align:center;padding:20px 16px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);border-top:1px solid var(--border);max-width:680px;margin:0 auto}
 .load{font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim);text-align:center;padding:24px 0;font-size:14px}
+
+/* painel resumo */
+.resumo-alert{border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid var(--border)}
+.resumo-alert.urgente{background:#fff4f4;border-color:rgba(184,64,64,.2);border-left:4px solid var(--red)}
+.resumo-alert.andamento{background:#fff8fa;border-color:var(--gold-bd);border-left:4px solid var(--gold)}
+.resumo-alert.financas-ok{background:var(--verde-claro);border-color:rgba(45,106,79,.2);border-left:4px solid var(--verde)}
+.resumo-alert.financas-neg{background:var(--mae-claro);border-color:rgba(184,134,11,.2);border-left:4px solid var(--mae)}
+.resumo-alert-title{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+.resumo-alert-body{font-family:'Playfair Display',serif;font-size:15px;font-weight:600}
+.resumo-alert-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:12px;color:var(--text-dim);margin-top:3px}
+.resumo-item-row{display:flex;align-items:center;gap:6px;padding:3px 0;font-family:'DM Sans',sans-serif;font-size:13px}
+.resumo-empty{font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim);font-size:13px;padding:20px 0;text-align:center}
+/* categoria collapsible */
+.cat-group{margin-bottom:4px}
+.cat-group-btn{width:100%;background:var(--gold-dim);border:1px solid var(--gold-bd);border-radius:8px;padding:7px 11px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.cat-group-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dark)}
+.cat-group-meta{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:9px;color:var(--text-dim)}
+.cat-group-arrow{font-size:10px;color:var(--gold)}
+.cat-group-content{padding:0 0 4px 0}
+/* whatsapp export */
+.btn-wpp{background:#25d366;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.08em;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s}
+.btn-wpp:hover{background:#1ebe5d}
+
 @media(max-width:480px){.h-title{font-size:20px}.stats-row{gap:8px}.stat-n{font-size:22px}}
 </style>
 </head>
@@ -207,7 +230,8 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab active" data-tab="manut">🔧 Manutenção</button>
+    <button class="tab active" data-tab="resumo">🏠 Resumo</button>
+    <button class="tab" data-tab="manut">🔧 Manutenção</button>
     <button class="tab" data-tab="suprimentos">📦 Suprimentos</button>
     <button class="tab" data-tab="financas">💰 Finanças</button>
   </div>
@@ -216,7 +240,11 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 <div class="content">
 
   <!-- MANUTENÇÃO -->
-  <div class="panel active" id="panel-manut">
+  <div class="panel active" id="panel-resumo">
+    <div id="resumo-content-main"></div>
+  </div>
+
+  <div class="panel" id="panel-manut">
     <div id="encontro-card-wrap"></div>
     <div id="manut-content"></div>
     <div id="manut-add-box" class="add-box" style="display:none">
@@ -260,12 +288,8 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
         <div class="stat-l">Em ordem</div>
       </div>
     </div>
-    <div id="sup-precisamos"></div>
-    <button class="collapse-btn" onclick="toggleSupOk()">
-      <span id="sup-ok-arrow">▼</span>
-      <span id="sup-ok-lbl">Em ordem — ver todos</span>
-    </button>
-    <div id="sup-ok-content" style="display:block"></div>
+    <div id="sup-lista-grupos"></div>
+    <div id="sup-exportar" style="margin:12px 0"></div>
     <div style="margin-top:20px">
       <div class="sec-hd">
         <span class="sec-dot" style="background:var(--gold)"></span>
@@ -644,6 +668,7 @@ document.querySelectorAll('.tab').forEach(t=>{
     document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
     t.classList.add('active');
     document.getElementById('panel-'+t.dataset.tab).classList.add('active');
+    if(t.dataset.tab==='resumo') renderResumo();
     if(t.dataset.tab==='suprimentos') renderSuprimentos();
     if(t.dataset.tab==='financas') renderFinancas();
   });
@@ -670,7 +695,7 @@ function updateAdminUI(){
   document.getElementById('btn-novo-pedido').style.display=isAdmin?'block':'none';
   document.getElementById('btn-fin-lancar').style.display=isAdmin?'block':'none';
   document.getElementById('btn-edit-encontro') && (document.getElementById('btn-edit-encontro').style.display=isAdmin?'inline-flex':'none');
-  renderManut(); renderSuprimentos(); renderFinancas();
+  renderResumo(); renderManut(); renderSuprimentos(); renderFinancas();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -898,6 +923,9 @@ function toggleSupOk(){
   document.getElementById('sup-ok-arrow').textContent=supOkOpen?'▼':'▶';
 }
 
+// state: which cat groups are open (all open by default)
+const catOpen={};
+
 function renderSuprimentos(){
   const items=getSup();
   const avulsos=getAvulsos();
@@ -912,8 +940,6 @@ function renderSuprimentos(){
 
   function renderSupItem(item){
     const nivel=supNivel(item);
-    const pct=item.min>0?Math.min(100,Math.round(item.qtd/item.min*100)):100;
-    const barColor=nivel==='urgente'?'var(--red)':nivel==='baixo'?'var(--ambar)':'#3a9a78';
     const priorClass = item.prioridade ? ' prioridade' : '';
     return `<div class="sup-item ${nivel}${priorClass}">
       <div class="sup-top" style="align-items:center">
@@ -922,8 +948,7 @@ function renderSuprimentos(){
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             <span class="sup-nome">${esc(item.nome)}</span>
-            <span class="sup-cat">${esc(item.cat||'geral')}</span>
-            ${item.prioridade?`<span style="font-family:'Cinzel',serif;font-size:8px;color:var(--mae);letter-spacing:.06em">★ prioridade</span>`:''}
+            ${item.prioridade?`<span style="font-family:'Cinzel',serif;font-size:8px;color:var(--mae);letter-spacing:.06em">★</span>`:''}
           </div>
           <div class="qtd-row">
             <button class="btn-qtd minus" onclick="adjustQtd('${item.id}',-1)">−</button>
@@ -940,10 +965,46 @@ function renderSuprimentos(){
     </div>`;
   }
 
-  const precHtml=urgente.concat(baixo).map(renderSupItem).join('');
-  document.getElementById('sup-precisamos').innerHTML=precHtml||'<div class="empty" style="margin-bottom:8px">Tudo abastecido!</div>';
-  document.getElementById('sup-ok-content').innerHTML=ok.map(renderSupItem).join('');
-  document.getElementById('sup-ok-lbl').textContent=`Em ordem — ${ok.length} ite${ok.length===1?'m':'ns'}`;
+  // Group by category
+  const cats = {};
+  items.forEach(item=>{
+    const c = item.cat||'geral';
+    if(!cats[c]) cats[c]=[];
+    cats[c].push(item);
+  });
+
+  const nivelOrder = {urgente:0,baixo:1,ok:2};
+  let html='';
+  Object.keys(cats).sort().forEach(cat=>{
+    const catItems = cats[cat].sort((a,b)=>nivelOrder[supNivel(a)]-nivelOrder[supNivel(b)]);
+    const nUrg = catItems.filter(x=>supNivel(x)==='urgente').length;
+    const nBx  = catItems.filter(x=>supNivel(x)==='baixo').length;
+    const nPr  = catItems.filter(x=>x.prioridade).length;
+    const key  = 'cat_'+cat;
+    if(catOpen[key]===undefined) catOpen[key]=true; // open by default
+    const open = catOpen[key];
+    let badges='';
+    if(nUrg) badges+=`<span style="color:var(--red);font-weight:700">${nUrg} urgente${nUrg>1?'s':''}</span>`;
+    if(nBx)  badges+=`<span style="color:var(--ambar)">${nBx} baixo</span>`;
+    if(nPr)  badges+=`<span style="color:var(--mae)">★ ${nPr}</span>`;
+    html+=`<div class="cat-group">
+      <button class="cat-group-btn" onclick="toggleCat('${key}')">
+        <span class="cat-group-label">${esc(cat)} <span style="opacity:.5">(${catItems.length})</span></span>
+        <div class="cat-group-meta">${badges}<span class="cat-group-arrow">${open?'▼':'▶'}</span></div>
+      </button>
+      <div class="cat-group-content" id="${key}" style="display:${open?'block':'none'}">
+        ${catItems.map(renderSupItem).join('')}
+      </div>
+    </div>`;
+  });
+  if(!items.length) html='<div class="empty">Nenhum item cadastrado.</div>';
+  document.getElementById('sup-lista-grupos').innerHTML=html;
+
+  // Exportar prioridades
+  const priors = items.filter(x=>x.prioridade);
+  document.getElementById('sup-exportar').innerHTML = priors.length
+    ? `<button class="btn-wpp" onclick="exportarPrioridades()">📲 Exportar prioridades (${priors.length}) para WhatsApp</button>`
+    : '';
 
   // Avulsos
   document.getElementById('sup-avulsos').innerHTML=avulsos.length?avulsos.map(a=>`
@@ -1439,6 +1500,101 @@ function esc(s){ const d=document.createElement('div'); d.textContent=s||''; ret
 function fmt(v){ return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtData(s){ if(!s) return ''; const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`; }
 
+
+function toggleCat(key){
+  catOpen[key]=!catOpen[key];
+  renderSuprimentos();
+}
+
+function exportarPrioridades(){
+  const items=getSup().filter(x=>x.prioridade);
+  if(!items.length){ toast('Sem itens prioritários',true); return; }
+  const cats={};
+  items.forEach(i=>{ const c=i.cat||'geral'; if(!cats[c]) cats[c]=[]; cats[c].push(i); });
+  let txt='🛒 *Lista de Compras — Bolhas de Luz*
+';
+  txt+=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})+'
+
+';
+  Object.keys(cats).sort().forEach(cat=>{
+    txt+=`*${cat.toUpperCase()}*
+`;
+    cats[cat].forEach(i=>{ txt+=`• ${i.nome} (${i.qtd} ${i.un||'un'} / mín ${i.min})
+`; });
+    txt+='
+';
+  });
+  txt+='_Gerado pelo app Bolhas de Luz_';
+  const url='https://wa.me/?text='+encodeURIComponent(txt);
+  window.open(url,'_blank');
+}
+
+// ── RESUMO ────────────────────────────────────────────────
+function renderResumo(){
+  const items=getSup();
+  const tasks=getManut();
+  const lancs=getLancamentos();
+  const now=new Date();
+  const curMes=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const mesLancs=lancs.filter(l=>l.data.startsWith(curMes));
+  const totalE=mesLancs.filter(l=>l.tipo==='mensalidade'||l.tipo==='extra').reduce((a,l)=>a+l.val,0);
+  const totalS=mesLancs.filter(l=>l.tipo==='saida'||l.tipo==='fixas').reduce((a,l)=>a+l.val,0);
+  const saldo=totalE-totalS;
+
+  const urgentes=items.filter(x=>supNivel(x)==='urgente');
+  const priors=items.filter(x=>x.prioridade);
+  const emAndamento=tasks.filter(t=>t.status==='andamento');
+  const mesNome=now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+
+  let html='';
+
+  // saldo
+  if(saldo<0){
+    html+=`<div class="resumo-alert financas-neg">
+      <div class="resumo-alert-title">💰 Saldo de ${mesNome}</div>
+      <div class="resumo-alert-body">${fmt(Math.abs(saldo))} sob amparo</div>
+      <div class="resumo-alert-sub">${fmt(totalE)} entradas · ${fmt(totalS)} saídas</div>
+    </div>`;
+  } else {
+    html+=`<div class="resumo-alert financas-ok">
+      <div class="resumo-alert-title">💰 Saldo de ${mesNome}</div>
+      <div class="resumo-alert-body">${fmt(saldo)} extra</div>
+      <div class="resumo-alert-sub">${fmt(totalE)} entradas · ${fmt(totalS)} saídas</div>
+    </div>`;
+  }
+
+  // suprimentos urgentes
+  if(urgentes.length){
+    html+=`<div class="resumo-alert urgente">
+      <div class="resumo-alert-title">📦 Suprimentos urgentes (${urgentes.length})</div>
+      ${urgentes.map(i=>`<div class="resumo-item-row">⚠️ <span>${esc(i.nome)}</span> <span style="font-family:'Cinzel',serif;font-size:11px;color:var(--red);margin-left:auto">${i.qtd} ${i.un||'un'}</span></div>`).join('')}
+    </div>`;
+  }
+
+  // prioridade de compra
+  if(priors.length){
+    html+=`<div class="resumo-alert" style="background:var(--mae-claro);border-color:rgba(184,134,11,.2);border-left:4px solid var(--mae)">
+      <div class="resumo-alert-title">★ Prioridade de compra (${priors.length})</div>
+      ${priors.map(i=>`<div class="resumo-item-row">• <span>${esc(i.nome)}</span><span style="font-family:'Cinzel',serif;font-size:11px;color:var(--text-dim);margin-left:auto">${esc(i.cat||'geral')}</span></div>`).join('')}
+      <button class="btn-wpp" style="margin-top:10px;font-size:9px;padding:6px 12px" onclick="exportarPrioridades()">📲 Enviar lista</button>
+    </div>`;
+  }
+
+  // manutenção em andamento
+  if(emAndamento.length){
+    html+=`<div class="resumo-alert andamento">
+      <div class="resumo-alert-title">🔧 Em andamento (${emAndamento.length})</div>
+      ${emAndamento.map(t=>`<div class="resumo-item-row">${t.emoji||'🔧'} <span>${esc(t.titulo)}</span></div>`).join('')}
+    </div>`;
+  }
+
+  if(!urgentes.length && !priors.length && !emAndamento.length && saldo>=0){
+    html+=`<div class="resumo-empty">✨ Tudo em ordem por aqui</div>`;
+  }
+
+  document.getElementById('resumo-content-main').innerHTML=html;
+}
+
 // ── MIGRAÇÃO DE CHAVES ANTIGAS ────────────────────────────
 const KEY_MAP = {
   manut_tasks:  ['manut_tasks','tasks','manutencao','manut','bdl_tasks','terreiro_tasks','obras'],
@@ -1479,6 +1635,7 @@ function showDiag(){
 // ── INIT ──────────────────────────────────────────────────
 document.getElementById('footer-date').textContent=new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
 migrate();
+renderResumo();
 renderManut();
 </script>
 </body>
