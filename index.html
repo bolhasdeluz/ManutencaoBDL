@@ -644,9 +644,26 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 const ADMIN_PASS = 'bdl2024';
 let isAdmin = false;
 
-// ── DADOS (localStorage) ─────────────────────────────────
-function load(key, def){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){return def;} }
-function save(key,val){ localStorage.setItem(key,JSON.stringify(val)); }
+// ── DADOS (window.storage com cache em memória) ──────────
+const DB = { manut_tasks:[], suprimentos:[], avulsos:[], financas:[], encontro:{estado:'pendente',data:''} };
+const KEYS = Object.keys(DB);
+
+async function dbLoad(){
+  for(const key of KEYS){
+    try{
+      const r = await window.storage.get(key);
+      if(r && r.value !== undefined) DB[key] = JSON.parse(r.value);
+    }catch(e){
+      // key not found yet — keep default
+    }
+  }
+}
+async function dbSave(key){
+  try{ await window.storage.set(key, JSON.stringify(DB[key])); }catch(e){ console.warn('storage save failed',key,e); }
+}
+// sync helpers used throughout the app (read from cache, write-through)
+function load(key, def){ return DB[key] !== undefined ? DB[key] : def; }
+function save(key, val){ DB[key]=val; dbSave(key); }
 
 // ── TOAST ─────────────────────────────────────────────────
 function toast(msg, isErr=false){
@@ -916,12 +933,7 @@ function supNivel(item){
   return 'ok';
 }
 
-let supOkOpen=true;
-function toggleSupOk(){
-  supOkOpen=!supOkOpen;
-  document.getElementById('sup-ok-content').style.display=supOkOpen?'block':'none';
-  document.getElementById('sup-ok-arrow').textContent=supOkOpen?'▼':'▶';
-}
+// toggleSupOk removed — categories replaced this
 
 // state: which cat groups are open (all open by default)
 const catOpen={};
@@ -1595,48 +1607,59 @@ function renderResumo(){
   document.getElementById('resumo-content-main').innerHTML=html;
 }
 
-// ── MIGRAÇÃO DE CHAVES ANTIGAS ────────────────────────────
-const KEY_MAP = {
-  manut_tasks:  ['manut_tasks','tasks','manutencao','manut','bdl_tasks','terreiro_tasks','obras'],
-  suprimentos:  ['suprimentos','estoque','stock','items','bdl_sup','bdl_estoque','terreiro_estoque'],
-  avulsos:      ['avulsos','pedidos','bdl_avulsos','terreiro_avulsos'],
-  financas:     ['financas','lancamentos','transacoes','registros','bdl_fin','terreiro_fin','financeiro'],
-  encontro:     ['encontro','proximo_encontro','bdl_encontro','terreiro_encontro'],
-};
+// ── MIGRAÇÃO: localStorage → window.storage (executa uma vez) ──
+async function migrate(){
+  // Se window.storage já tem dados, skip
+  try{
+    const check = await window.storage.get('manut_tasks');
+    if(check && check.value) return; // já migrado
+  }catch(e){ /* not found, proceed */ }
 
-function migrate(){
+  // Tenta puxar do localStorage (versões antigas do app)
+  const KEY_MAP = {
+    manut_tasks:  ['manut_tasks','tasks','manutencao','manut','bdl_tasks'],
+    suprimentos:  ['suprimentos','estoque','stock','items','bdl_sup'],
+    avulsos:      ['avulsos','pedidos','bdl_avulsos'],
+    financas:     ['financas','lancamentos','transacoes','registros','bdl_fin'],
+    encontro:     ['encontro','proximo_encontro','bdl_encontro'],
+  };
   let migrated=[];
-  Object.entries(KEY_MAP).forEach(([canonical, aliases])=>{
-    if(localStorage.getItem(canonical)) return; // já existe com a chave correta
+  for(const [canonical, aliases] of Object.entries(KEY_MAP)){
     for(const alias of aliases){
-      if(alias===canonical) continue;
       const raw=localStorage.getItem(alias);
       if(raw){
-        localStorage.setItem(canonical, raw);
-        migrated.push(`${alias} → ${canonical}`);
+        try{ await window.storage.set(canonical, raw); migrated.push(canonical); }catch(e){}
         break;
       }
     }
-  });
-  if(migrated.length) toast('Dados importados: '+migrated.join(', '));
+  }
+  if(migrated.length) toast('Dados migrados: '+migrated.join(', '));
 }
 
 // ── DIAGNÓSTICO ───────────────────────────────────────────
-function showDiag(){
-  const keys=Object.keys(localStorage);
-  if(!keys.length){ alert('localStorage vazio — nenhum dado encontrado.'); return; }
-  const lines=keys.map(k=>{
-    let val=''; try{ const p=JSON.parse(localStorage.getItem(k)); val=Array.isArray(p)?`[${p.length} itens]`:typeof p==='object'?JSON.stringify(p).slice(0,60):String(p); }catch(e){val=String(localStorage.getItem(k)).slice(0,60);}
-    return `• ${k}: ${val}`;
-  });
-  alert('Chaves encontradas no localStorage:\n\n'+lines.join('\n')+'\n\nTotal: '+keys.length+' chaves');
+async function showDiag(){
+  try{
+    const res = await window.storage.list();
+    if(!res||!res.keys||!res.keys.length){ alert('Nenhum dado salvo ainda.'); return; }
+    const lines = res.keys.map(k=>{
+      const v = DB[k];
+      const disp = Array.isArray(v)?`[${v.length} itens]`:typeof v==='object'?JSON.stringify(v).slice(0,60):String(v);
+      return `• ${k}: ${disp}`;
+    });
+    alert('Dados no storage:\n\n'+lines.join('\n'));
+  }catch(e){ alert('Erro ao listar: '+e.message); }
 }
 
 // ── INIT ──────────────────────────────────────────────────
 document.getElementById('footer-date').textContent=new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
-migrate();
-renderResumo();
-renderManut();
+
+async function init(){
+  await migrate();
+  await dbLoad();
+  renderResumo();
+  renderManut();
+}
+init();
 </script>
 </body>
 </html>
