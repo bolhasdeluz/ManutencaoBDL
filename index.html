@@ -145,6 +145,22 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .chart-bar-e{background:var(--verde);border-radius:3px 3px 0 0;width:100%;min-height:2px;transition:height .3s}
 .chart-bar-s{background:var(--red);border-radius:3px 3px 0 0;width:100%;min-height:2px;transition:height .3s;margin-bottom:1px}
 .chart-lbl{font-family:'Cinzel',serif;font-size:8px;color:var(--text-dim);margin-top:4px;text-align:center}
+
+/* mensalidades table */
+.mens-table{width:100%;border-collapse:collapse;margin-top:8px}
+.mens-table th{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:6px 8px;text-align:left;border-bottom:1px solid var(--border)}
+.mens-table td{padding:7px 8px;border-bottom:1px solid rgba(196,57,107,.06);vertical-align:middle}
+.mens-table tr:last-child td{border-bottom:none}
+.mens-nome{font-family:'Playfair Display',serif;font-size:14px;font-weight:600}
+.mens-inp{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-family:'Cinzel',serif;font-size:12px;color:var(--verde-txt);background:var(--verde-claro);outline:none;text-align:right}
+.mens-inp:focus{border-color:var(--verde)}
+.mens-total-row td{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--verde);padding-top:10px;border-top:2px solid var(--border)}
+.mens-check{width:18px;height:18px;accent-color:var(--verde);cursor:pointer}
+.ti-mens-detalhe{background:var(--verde-claro);border-radius:8px;padding:10px 12px;margin-top:6px}
+.ti-mens-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-family:'Crimson Pro',serif;font-size:13px}
+.ti-mens-row span:first-child{color:var(--text-dim)}
+.ti-mens-row span:last-child{font-weight:600;color:var(--verde-txt)}
+
 .footer{text-align:center;padding:20px 16px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);border-top:1px solid var(--border);max-width:680px;margin:0 auto}
 .load{font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim);text-align:center;padding:24px 0;font-size:14px}
 @media(max-width:480px){.h-title{font-size:20px}.stats-row{gap:8px}.stat-n{font-size:22px}}
@@ -295,7 +311,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     </div>
     <div id="fin-form" style="display:none" class="card">
       <div class="tipo-tabs">
-        <button id="tt-mens" class="tt e" onclick="setTipo('mensalidade')">↑ Mensalidade</button>
+        <button id="tt-mens" class="tt e" onclick="openMensModal()">↑ Mensalidade</button>
         <button id="tt-extra" class="tt" onclick="setTipo('extra')">↑ Extra</button>
         <button id="tt-saida" class="tt" onclick="setTipo('saida')">↓ Saída</button>
       </div>
@@ -463,6 +479,38 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     <div class="modal-btns">
       <button class="btn-c" style="flex:1" onclick="closeModal('modal-edit-sup')">Cancelar</button>
       <button class="btn-p" style="flex:1" onclick="saveEditSup()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Mensalidades -->
+<div class="overlay" id="modal-mens" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-title">💚 Mensalidades do mês</div>
+    <div class="modal-sub">Preencha os valores pagos por cada membra</div>
+    <div class="fld">
+      <label class="flbl">Data de referência</label>
+      <input id="mens-data" class="inp" type="date"/>
+    </div>
+    <table class="mens-table" id="mens-tabela">
+      <thead>
+        <tr>
+          <th style="width:28px">✓</th>
+          <th>Membra</th>
+          <th style="width:110px;text-align:right">Valor (R$)</th>
+        </tr>
+      </thead>
+      <tbody id="mens-tbody"></tbody>
+      <tfoot>
+        <tr class="mens-total-row">
+          <td colspan="2">Total</td>
+          <td id="mens-total" style="text-align:right">R$ 0,00</td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="closeModal('modal-mens')">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="salvarMensalidades()">Lançar</button>
     </div>
   </div>
 </div>
@@ -849,6 +897,8 @@ function saveLancamentos(d){ save('financas',d); }
 
 let finTipo='mensalidade';
 
+const MEMBRAS = ['Ness','Thali','Jaque','Tassi','Brenda','Anne','Vitória','Manu','Juliana','Gabi','Márcia','Nicole','Stephani'];
+
 function setTipo(t){
   finTipo=t;
   ['mens','extra','saida'].forEach(k=>{ document.getElementById('tt-'+k).className='tt'; });
@@ -856,8 +906,57 @@ function setTipo(t){
   document.getElementById('tt-extra').classList.toggle('ex', t==='extra');
   document.getElementById('tt-saida').classList.toggle('s', t==='saida');
   document.getElementById('fin-conta-row').style.display=t==='saida'?'block':'none';
-  document.getElementById('fin-desc-lbl').textContent=t==='mensalidade'?'Nome (quem pagou)':t==='extra'?'Descrição':'Descrição';
+  document.getElementById('fin-desc-lbl').textContent=t==='extra'?'Descrição':'Descrição';
   if(t!=='saida') document.getElementById('fin-conta').value='';
+}
+
+// ── MODAL MENSALIDADES ────────────────────────────────────
+function openMensModal(){
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('mens-data').value=today;
+  const tbody=document.getElementById('mens-tbody');
+  tbody.innerHTML=MEMBRAS.map((nome,i)=>`
+    <tr>
+      <td><input type="checkbox" class="mens-check" id="mc-${i}" checked onchange="calcMensTotal()"/></td>
+      <td><span class="mens-nome">${nome}</span></td>
+      <td><input type="number" class="mens-inp" id="mv-${i}" placeholder="0,00" min="0" step="0.01"
+        oninput="calcMensTotal()"
+        onkeydown="if(event.key==='Enter'){const nx=document.getElementById('mv-${i+1}');if(nx)nx.focus();}"/></td>
+    </tr>`).join('');
+  calcMensTotal();
+  openModal('modal-mens');
+  setTimeout(()=>document.getElementById('mv-0').focus(),100);
+}
+
+function calcMensTotal(){
+  let tot=0;
+  MEMBRAS.forEach((_,i)=>{
+    const chk=document.getElementById('mc-'+i);
+    const inp=document.getElementById('mv-'+i);
+    if(chk&&chk.checked&&inp) tot+=parseFloat(inp.value)||0;
+  });
+  document.getElementById('mens-total').textContent=fmt(tot);
+}
+
+function salvarMensalidades(){
+  const data=document.getElementById('mens-data').value;
+  if(!data){ toast('Informe a data',true); return; }
+  const membras=[];
+  MEMBRAS.forEach((nome,i)=>{
+    const chk=document.getElementById('mc-'+i);
+    const inp=document.getElementById('mv-'+i);
+    const val=parseFloat(inp&&inp.value)||0;
+    if(chk&&chk.checked&&val>0) membras.push({nome,val});
+  });
+  if(!membras.length){ toast('Nenhum valor preenchido',true); return; }
+  const total=membras.reduce((a,m)=>a+m.val,0);
+  const lancs=getLancamentos();
+  lancs.push({ id:Date.now().toString(), tipo:'mensalidade', desc:'Mensalidades', val:total, data, membras });
+  saveLancamentos(lancs);
+  closeModal('modal-mens');
+  document.getElementById('fin-form').style.display='none';
+  renderFinancas();
+  toast(`Mensalidades lançadas — ${fmt(total)}`);
 }
 function onContaChange(){
   const v=document.getElementById('fin-conta').value;
@@ -924,17 +1023,37 @@ function renderFinancas(){
   const saidas=filtered.filter(l=>l.tipo==='saida');
   let html='';
 
-  // MENSALIDADES: agrupadas em uma linha
+  // MENSALIDADES
   if(mens.length){
     const totalMens=mens.reduce((a,l)=>a+l.val,0);
+    const pagaram=mens.flatMap(l=>l.membras||[{nome:l.desc,val:l.val}]);
     html+=`<div class="ti-group-header">Mensalidades <span style="font-family:'Playfair Display',serif;font-size:13px;color:var(--verde)">${fmt(totalMens)}</span></div>`;
-    html+=`<div class="ti">
-      <div class="ti-left">
-        <div class="ti-desc">Mensalidades (${mens.length})</div>
-        <div class="ti-sub">${mens.map(m=>esc(m.desc)).join(', ')}</div>
-      </div>
-      <div class="ti-val e">${fmt(totalMens)}</div>
-    </div>`;
+    if(isAdmin){
+      // Admin: card expandido com detalhe por membra
+      html+=`<div class="ti" style="flex-direction:column;align-items:stretch">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="ti-left">
+            <div class="ti-desc">Mensalidades <span style="font-family:'Cinzel',serif;font-size:11px;color:var(--text-dim)">(${pagaram.length} membras)</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="ti-val e">${fmt(totalMens)}</div>
+            <button class="bic bic-d" onclick="delMensalidades()">🗑</button>
+          </div>
+        </div>
+        <div class="ti-mens-detalhe">
+          ${pagaram.map(m=>`<div class="ti-mens-row"><span>${esc(m.nome)}</span><span>${fmt(m.val)}</span></div>`).join('')}
+        </div>
+      </div>`;
+    } else {
+      // Público: uma linha só com total
+      html+=`<div class="ti">
+        <div class="ti-left">
+          <div class="ti-desc">Mensalidades</div>
+          <div class="ti-sub">${pagaram.length} membras</div>
+        </div>
+        <div class="ti-val e">${fmt(totalMens)}</div>
+      </div>`;
+    }
   }
 
   // EXTRAS: individuais
@@ -995,6 +1114,12 @@ function saveEditFin(){
 function delFin(id){
   if(!confirm('Remover lançamento?')) return;
   saveLancamentos(getLancamentos().filter(x=>x.id!==id)); renderFinancas(); toast('Removido');
+}
+function delMensalidades(){
+  const mes=document.getElementById('sel-mes').value;
+  if(!confirm('Remover todas as mensalidades de '+mes+'?')) return;
+  const lancs=getLancamentos().filter(l=>!(l.tipo==='mensalidade'&&l.data.startsWith(mes)));
+  saveLancamentos(lancs); renderFinancas(); toast('Mensalidades removidas');
 }
 
 // ── RESUMO ANUAL ──────────────────────────────────────────
