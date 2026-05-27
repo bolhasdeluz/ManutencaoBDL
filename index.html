@@ -26,8 +26,8 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .h-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:600;line-height:1.15}
 .h-sub{font-family:'Crimson Pro',serif;font-size:14px;font-style:italic;opacity:.8;margin-top:3px}
 .btn-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.28);border-radius:20px;color:rgba(255,255,255,.85);font-family:'DM Sans',sans-serif;font-size:.75rem;padding:5px 13px;cursor:pointer;transition:all .2s}
-.btn-pill:hover,.btn-pill.logout{background:rgba(255,255,255,.9);color:var(--dark)}
-.btn-pill.logout{color:var(--red)}
+.btn-pill:hover{background:rgba(255,255,255,.9);color:var(--dark)}
+.btn-pill.logout{background:rgba(255,255,255,.9);color:var(--red)}
 .admin-bar{padding:6px 16px;margin-top:2px;text-align:center;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.9);background:rgba(255,255,255,.12)}
 .tabs-wrap{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;box-shadow:0 1px 8px rgba(196,57,107,.06)}
 .tabs{max-width:680px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none}
@@ -54,6 +54,8 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .bic-e{background:var(--gold-dim)}.bic-e:hover{background:rgba(196,57,107,.15)}
 .bic-d{background:var(--red-dim)}.bic-d:hover{background:rgba(184,64,64,.15)}
 .bic-g{background:var(--verde-claro)}.bic-g:hover{background:#c8ecd8}
+.bic-status{background:#f0f0f0;font-size:16px;padding:4px 7px;border:none;border-radius:6px;cursor:pointer;transition:background .15s}
+.bic-status:hover{background:#e0e0e0}
 .ef{display:flex;flex-direction:column;gap:9px}
 .erow{display:flex;gap:8px;flex-wrap:wrap}
 .inp{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:6px;font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);background:transparent;outline:none;transition:border-color .2s}
@@ -73,9 +75,11 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .stat-c{flex:1;background:var(--surface);border-radius:var(--radius);padding:12px 10px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border)}
 .stat-n{font-family:'Playfair Display',serif;font-size:28px;font-weight:600}
 .stat-l{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-top:2px}
+/* overlay & modal */
 .overlay{position:fixed;inset:0;background:rgba(40,10,20,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:100}
-.modal{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:var(--radius);box-shadow:0 8px 40px rgba(196,57,107,.15);padding:26px 24px;width:340px;max-width:93vw}
+.modal{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--gold);border-radius:var(--radius);box-shadow:0 8px 40px rgba(196,57,107,.15);padding:26px 24px;width:340px;max-width:93vw;max-height:90vh;overflow-y:auto}
 .modal-lg{width:520px}
+.modal-xl{width:600px}
 .modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;margin-bottom:6px}
 .modal-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-dim);margin-bottom:16px}
 .modal-btns{display:flex;gap:8px;margin-top:14px}
@@ -84,22 +88,18 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .err-msg{font-family:'Crimson Pro',serif;color:var(--red);font-style:italic;font-size:13px;margin-top:4px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--gold);color:var(--gold);border-radius:7px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:11px 18px;box-shadow:0 4px 20px rgba(196,57,107,.15);z-index:300;white-space:nowrap;animation:fadeIn .2s ease}
 .toast.err{border-color:var(--red);color:var(--red)}
-.cbadge{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 9px;border-radius:20px;background:var(--ambar-claro);color:var(--ambar-txt);font-weight:500}
-.cbadge.ok{background:var(--verde-claro);color:var(--verde-txt)}
-.cbadge-x{background:none;border:none;cursor:pointer;font-size:10px;opacity:.6;padding:0 0 0 2px;line-height:1}
-.btn-vou{background:var(--gold-dim);color:var(--dark);border:1px solid var(--gold-bd);border-radius:6px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s}
-.btn-vou:hover{background:rgba(196,57,107,.15)}
-.mini-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:8px}
-.mini-fill{height:100%;border-radius:4px;transition:width .3s ease}
-/* finanças */
-.ti{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;box-shadow:0 1px 8px rgba(196,57,107,.05)}
-.ti-val{font-family:'Cinzel',serif;font-size:14px;font-weight:600;white-space:nowrap}
-.ti-val.e{color:var(--verde)}.ti-val.s{color:var(--red)}.ti-val.mae{color:var(--mae)}
-.tipo-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.tt{background:none;border:1px solid var(--border);border-radius:7px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:.06em;color:var(--text-dim);transition:all .15s}
-.tt.e{background:var(--verde-claro);color:var(--verde-txt);border-color:rgba(45,106,79,.3)}
-.tt.s{background:#fdf0ee;color:#7a1f14;border-color:rgba(192,57,43,.3)}
-.tt.ex{background:var(--gold-dim);color:var(--dark);border-color:var(--gold-bd)}
+/* encontro card */
+.encontro-card{border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;border:1px solid var(--border);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.encontro-card.pendente{background:#fff8fa;border-left:4px solid var(--gold)}
+.encontro-card.marcado{background:var(--verde-claro);border-left:4px solid var(--verde)}
+.encontro-card.sem_previsao{background:#f9f9f9;border-left:4px solid #ccc}
+.encontro-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px}
+.encontro-val{font-family:'Playfair Display',serif;font-size:16px;font-weight:600}
+/* status badge */
+.status-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.status-badge.andamento{background:rgba(196,57,107,.1);color:var(--gold)}
+.status-badge.futura{background:var(--ambar-claro);color:var(--ambar-txt)}
+.status-badge.concluida{background:var(--verde-claro);color:var(--verde-txt)}
 /* suprimentos */
 .sup-item{background:var(--surface);border-radius:var(--radius);padding:14px 15px;margin-bottom:8px;box-shadow:var(--shadow);border:1px solid var(--border);animation:fadeIn .3s ease both}
 .sup-item.urgente{border-left:3px solid var(--red)}
@@ -109,21 +109,42 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .sup-nome{font-family:'Playfair Display',serif;font-size:15px;font-weight:600}
 .sup-meta{display:flex;gap:8px;align-items:center;margin-top:3px;flex-wrap:wrap}
 .sup-cat{font-family:'Cinzel',serif;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);background:var(--gold-dim);padding:2px 7px;border-radius:20px}
+.mini-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:8px}
+.mini-fill{height:100%;border-radius:4px;transition:width .3s ease}
 .collapse-btn{background:none;border:none;cursor:pointer;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);padding:8px 0;width:100%;text-align:left;display:flex;align-items:center;gap:6px}
-/* encontro card */
-.encontro-card{border-radius:var(--radius);padding:14px 16px;margin-bottom:18px;border:1px solid var(--border);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.encontro-card.pendente{background:#fff8fa;border-left:4px solid var(--gold)}
-.encontro-card.marcado{background:var(--verde-claro);border-left:4px solid var(--verde)}
-.encontro-card.sem_previsao{background:#f9f9f9;border-left:4px solid #ccc}
-.encontro-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px}
-.encontro-val{font-family:'Playfair Display',serif;font-size:16px;font-weight:600}
+/* avulso */
+.avulso-item{background:var(--surface);border-radius:10px;padding:11px 14px;margin-bottom:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 1px 8px rgba(196,57,107,.04)}
+.avulso-nome{font-family:'Playfair Display',serif;font-size:14px;font-weight:600}
+.avulso-meta{font-family:'Crimson Pro',serif;font-style:italic;font-size:12px;color:var(--text-dim)}
+/* finanças */
+.ti{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;box-shadow:0 1px 8px rgba(196,57,107,.05)}
+.ti-left{flex:1;min-width:0}
+.ti-desc{font-family:'Playfair Display',serif;font-size:14px;font-weight:600}
+.ti-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:12px;color:var(--text-dim);margin-top:2px}
+.ti-val{font-family:'Cinzel',serif;font-size:14px;font-weight:600;white-space:nowrap}
+.ti-val.e{color:var(--verde)}.ti-val.s{color:var(--red)}.ti-val.mae{color:var(--mae)}
+.ti-group-header{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);padding:8px 0 4px;display:flex;align-items:center;justify-content:space-between}
+.tipo-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tt{background:none;border:1px solid var(--border);border-radius:7px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:.06em;color:var(--text-dim);transition:all .15s}
+.tt.e{background:var(--verde-claro);color:var(--verde-txt);border-color:rgba(45,106,79,.3)}
+.tt.s{background:#fdf0ee;color:#7a1f14;border-color:rgba(192,57,43,.3)}
+.tt.ex{background:var(--gold-dim);color:var(--dark);border-color:var(--gold-bd)}
 /* mae de santo */
 .mae-box{background:var(--mae-claro);border:1px solid rgba(184,134,11,.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
 .mae-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mae);opacity:.8}
 .mae-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:var(--mae)}
-/* fin buttons row */
 .fin-btns-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .sel-row{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+/* resumo popup */
+.resumo-mes{background:var(--gold-dim);border-radius:8px;padding:10px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.resumo-mes-nome{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
+.resumo-mes-vals{display:flex;gap:14px;font-family:'Cinzel',serif;font-size:11px}
+/* grafico */
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:3px;height:120px;margin:16px 0 8px}
+.chart-bar-col{display:flex;flex-direction:column;align-items:center;flex:1;height:100%}
+.chart-bar-e{background:var(--verde);border-radius:3px 3px 0 0;width:100%;min-height:2px;transition:height .3s}
+.chart-bar-s{background:var(--red);border-radius:3px 3px 0 0;width:100%;min-height:2px;transition:height .3s;margin-bottom:1px}
+.chart-lbl{font-family:'Cinzel',serif;font-size:8px;color:var(--text-dim);margin-top:4px;text-align:center}
 .footer{text-align:center;padding:20px 16px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);border-top:1px solid var(--border);max-width:680px;margin:0 auto}
 .load{font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim);text-align:center;padding:24px 0;font-size:14px}
 @media(max-width:480px){.h-title{font-size:20px}.stats-row{gap:8px}.stat-n{font-size:22px}}
@@ -138,7 +159,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
       <div class="h-title">Manutenção & Projetos</div>
       <div class="h-sub">Obras, suprimentos e finanças</div>
     </div>
-    <button id="btn-admin-toggle" class="btn-pill">Admin</button>
+    <button id="btn-admin-toggle" class="btn-pill" onclick="toggleAdmin()">Admin</button>
   </div>
   <div id="admin-bar" class="admin-bar" style="display:none">✨ Modo admin — edição habilitada</div>
 </div>
@@ -153,25 +174,22 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
 <div class="content">
 
+  <!-- MANUTENÇÃO -->
   <div class="panel active" id="panel-manut">
-    <div id="encontro-card" class="encontro-card pendente">
-      <div>
-        <div class="encontro-label">🗓 Próximo encontro</div>
-        <div class="encontro-val" id="encontro-val">Pendente de agendamento</div>
-      </div>
-      <button id="btn-edit-encontro" class="bic bic-e" style="display:none" onclick="openEncontroModal()">✏️</button>
-    </div>
-    <div id="manut-content"><div class="load">Carregando…</div></div>
+    <div id="encontro-card-wrap"></div>
+    <div id="manut-content"></div>
     <div id="manut-add-box" class="add-box" style="display:none">
       <div class="ef">
         <div class="erow">
-          <input id="manut-new-emoji" class="inp inp-sm" value="🔧" style="flex:0 0 60px"/>
+          <input id="manut-new-emoji" class="inp inp-sm" value="🔧" style="flex:0 0 60px"
+            onkeydown="if(event.key==='Enter')document.getElementById('manut-new-titulo').focus()"/>
           <input id="manut-new-titulo" class="inp inp-grow" placeholder="Título da tarefa"
-            onkeydown="if(event.key==='Enter')addManutTask()"/>
+            onkeydown="if(event.key==='Enter')document.getElementById('manut-new-desc').focus()"/>
         </div>
         <input id="manut-new-desc" class="inp" placeholder="Observação (opcional)"
-          onkeydown="if(event.key==='Enter')addManutTask()"/>
-        <select id="manut-new-status" class="sel">
+          onkeydown="if(event.key==='Enter')document.getElementById('manut-new-status').focus()"/>
+        <select id="manut-new-status" class="sel"
+          onkeydown="if(event.key==='Enter')addManutTask()">
           <option value="andamento">Em andamento</option>
           <option value="futura">Futura</option>
           <option value="concluida">Concluída</option>
@@ -185,6 +203,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     <button id="manut-add-btn" class="add-box btn-add-f" style="display:none" onclick="showAddManut()">+ Adicionar tarefa</button>
   </div>
 
+  <!-- SUPRIMENTOS -->
   <div class="panel" id="panel-suprimentos">
     <div class="stats-row">
       <div class="stat-c" style="border-top:3px solid var(--red)">
@@ -200,7 +219,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
         <div class="stat-l">Em ordem</div>
       </div>
     </div>
-    <div id="sup-cat-filter" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
     <div id="sup-precisamos"></div>
     <button class="collapse-btn" onclick="toggleSupOk()">
       <span id="sup-ok-arrow">▶</span>
@@ -212,7 +230,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
         <span class="sec-dot" style="background:var(--gold)"></span>
         <span class="sec-lbl">Pedidos avulsos</span>
         <span class="sec-cnt" id="sup-avulso-cnt">0</span>
-        <button class="btn-p" style="margin-left:auto;font-size:10px;padding:5px 12px" onclick="openAvulsoModal()">+ Novo pedido</button>
+        <button id="btn-novo-pedido" class="btn-p" style="margin-left:auto;font-size:10px;padding:5px 12px;display:none" onclick="openAvulsoModal()">+ Novo pedido</button>
       </div>
       <div id="sup-avulsos"></div>
     </div>
@@ -223,12 +241,15 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
           <input id="sup-new-nome" class="inp inp-grow" placeholder="Nome do item"
             onkeydown="if(event.key==='Enter')document.getElementById('sup-new-cat').focus()"/>
           <input id="sup-new-cat" class="inp" style="width:120px" placeholder="Categoria"
-            onkeydown="if(event.key==='Enter')addSupItem()"/>
+            onkeydown="if(event.key==='Enter')document.getElementById('sup-new-qtd').focus()"/>
         </div>
         <div class="erow">
-          <div style="flex:1"><label class="flbl">Qtd atual</label><input id="sup-new-qtd" class="inp" type="number" min="0" step="1" value="0"/></div>
-          <div style="flex:1"><label class="flbl">Unidade</label><input id="sup-new-un" class="inp" value="un"/></div>
-          <div style="flex:1"><label class="flbl">Mínimo</label><input id="sup-new-min" class="inp" type="number" min="0" step="1" value="1"/></div>
+          <div style="flex:1"><label class="flbl">Qtd atual</label><input id="sup-new-qtd" class="inp" type="number" min="0" step="1" value="0"
+            onkeydown="if(event.key==='Enter')document.getElementById('sup-new-un').focus()"/></div>
+          <div style="flex:1"><label class="flbl">Unidade</label><input id="sup-new-un" class="inp" value="un"
+            onkeydown="if(event.key==='Enter')document.getElementById('sup-new-min').focus()"/></div>
+          <div style="flex:1"><label class="flbl">Mínimo</label><input id="sup-new-min" class="inp" type="number" min="0" step="1" value="1"
+            onkeydown="if(event.key==='Enter')addSupItem()"/></div>
         </div>
         <div class="ebtns">
           <button class="btn-c" onclick="document.getElementById('sup-add-box').style.display='none';document.getElementById('sup-add-btn').style.display='block'">Cancelar</button>
@@ -240,17 +261,11 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
       onclick="this.style.display='none';document.getElementById('sup-add-box').style.display='block'">+ Adicionar item fixo ao estoque</button>
   </div>
 
+  <!-- FINANÇAS -->
   <div class="panel" id="panel-financas">
-    <div id="tambor-card" class="card" style="margin-bottom:16px;border-top:3px solid var(--gold)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)">🥁 Tambor do mês</span>
-        <button id="btn-edit-tambor" class="bic bic-e" style="display:none" onclick="openTamborModal()">✏️</button>
-      </div>
-      <div id="tambor-content" style="font-family:'Crimson Pro',serif;font-style:italic;font-size:14px;color:var(--text-dim)">A definir</div>
-    </div>
     <div class="sel-row">
       <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)">Mês:</span>
-      <select id="sel-mes" class="sel" onchange="onMesChange()"></select>
+      <select id="sel-mes" class="sel" onchange="renderFinancas()"></select>
     </div>
     <div id="mae-box" class="mae-box" style="display:none">
       <div>
@@ -261,7 +276,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     </div>
     <div class="stats-row">
       <div class="stat-c" style="border-top:3px solid var(--verde)">
-        <div class="stat-n ce" id="fin-te" style="color:var(--verde)">–</div>
+        <div class="stat-n" id="fin-te" style="color:var(--verde)">–</div>
         <div class="stat-l">Entradas</div>
       </div>
       <div class="stat-c" style="border-top:3px solid var(--red)">
@@ -275,7 +290,6 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     </div>
     <div class="fin-btns-row">
       <button id="btn-fin-lancar" class="btn-p" style="display:none;font-size:10px;padding:6px 14px" onclick="toggleFinForm()">+ Lançar</button>
-      <button id="btn-fixas" class="btn-p" style="display:none;font-size:10px;padding:6px 14px;background:var(--verde)" onclick="openFixasModal()">⚡ Fixas do mês</button>
       <button class="btn-ghost" style="font-size:10px;padding:6px 14px" onclick="openResumoAnual()">📊 Resumo 2026</button>
       <button class="btn-ghost" style="font-size:10px;padding:6px 14px" onclick="openGrafico()">📈 Gráfico</button>
     </div>
@@ -311,21 +325,24 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
         <div class="fld" style="flex:1">
           <label class="flbl">Valor (R$)</label>
           <input id="fin-val" class="inp" type="number" placeholder="0,00" min="0" step="0.01"
-            onkeydown="if(event.key==='Enter')lancar()"/>
+            onkeydown="if(event.key==='Enter')document.getElementById('fin-data').focus()"/>
         </div>
         <div class="fld" style="flex:1">
           <label class="flbl">Data</label>
-          <input id="fin-data" class="inp" type="date"/>
+          <input id="fin-data" class="inp" type="date"
+            onkeydown="if(event.key==='Enter')lancar()"/>
         </div>
       </div>
-      <div style="text-align:right"><button class="btn-p" id="btn-lancar" onclick="lancar()">Lançar</button></div>
+      <div style="text-align:right"><button class="btn-p" onclick="lancar()">Lançar</button></div>
     </div>
-    <div id="financas-content"><div class="load">Carregando…</div></div>
+    <div id="financas-content"></div>
   </div>
+
 </div>
 
 <footer class="footer">Bolhas de Luz · <span id="footer-date"></span></footer>
 
+<!-- MODAL: Login -->
 <div class="overlay" id="modal-login" style="display:none">
   <div class="modal">
     <div class="modal-title">🔐 Acesso Admin</div>
@@ -340,7 +357,737 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
   </div>
 </div>
 
+<!-- MODAL: Editar manutenção -->
 <div class="overlay" id="modal-edit-manut" style="display:none">
   <div class="modal">
     <div class="modal-title">Editar tarefa</div>
-    <input type="hidden" id
+    <input type="hidden" id="edit-manut-id"/>
+    <div class="fld">
+      <label class="flbl">Emoji</label>
+      <input id="edit-manut-emoji" class="inp" style="width:70px"
+        onkeydown="if(event.key==='Enter')document.getElementById('edit-manut-titulo').focus()"/>
+    </div>
+    <div class="fld">
+      <label class="flbl">Título</label>
+      <input id="edit-manut-titulo" class="inp"
+        onkeydown="if(event.key==='Enter')document.getElementById('edit-manut-desc').focus()"/>
+    </div>
+    <div class="fld">
+      <label class="flbl">Observação</label>
+      <input id="edit-manut-desc" class="inp"
+        onkeydown="if(event.key==='Enter')saveEditManut()"/>
+    </div>
+    <div class="fld">
+      <label class="flbl">Status</label>
+      <select id="edit-manut-status" class="sel" style="width:100%">
+        <option value="andamento">Em andamento</option>
+        <option value="futura">Futura</option>
+        <option value="concluida">Concluída</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="closeModal('modal-edit-manut')">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="saveEditManut()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Próximo encontro -->
+<div class="overlay" id="modal-encontro" style="display:none">
+  <div class="modal">
+    <div class="modal-title">🗓 Próximo encontro</div>
+    <div class="fld">
+      <label class="flbl">Estado</label>
+      <select id="enc-estado" class="sel" style="width:100%" onchange="toggleEncData()">
+        <option value="pendente">Pendente de agendamento</option>
+        <option value="marcado">Marcado</option>
+        <option value="sem_previsao">Sem previsão</option>
+      </select>
+    </div>
+    <div class="fld" id="enc-data-row">
+      <label class="flbl">Data</label>
+      <input id="enc-data" class="inp" type="date"
+        onkeydown="if(event.key==='Enter')saveEncontro()"/>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="closeModal('modal-encontro')">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="saveEncontro()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Novo pedido avulso -->
+<div class="overlay" id="modal-avulso" style="display:none">
+  <div class="modal">
+    <div class="modal-title">📋 Novo pedido</div>
+    <div class="modal-sub">Informe o item e a quantidade necessária</div>
+    <div class="fld">
+      <label class="flbl">Item</label>
+      <input id="av-nome" class="inp" placeholder="Ex: Velas brancas"
+        onkeydown="if(event.key==='Enter')document.getElementById('av-qtd').focus()"/>
+    </div>
+    <div class="fld">
+      <label class="flbl">Qtd / detalhe</label>
+      <input id="av-qtd" class="inp" placeholder="Ex: 2 caixas"
+        onkeydown="if(event.key==='Enter')document.getElementById('av-obs').focus()"/>
+    </div>
+    <div class="fld">
+      <label class="flbl">Observação</label>
+      <input id="av-obs" class="inp" placeholder="Opcional"
+        onkeydown="if(event.key==='Enter')saveAvulso()"/>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="closeModal('modal-avulso')">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="saveAvulso()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Editar suprimento -->
+<div class="overlay" id="modal-edit-sup" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Editar item</div>
+    <input type="hidden" id="edit-sup-id"/>
+    <div class="fld"><label class="flbl">Nome</label><input id="edit-sup-nome" class="inp"
+      onkeydown="if(event.key==='Enter')document.getElementById('edit-sup-qtd').focus()"/></div>
+    <div class="erow">
+      <div style="flex:1"><label class="flbl">Qtd</label><input id="edit-sup-qtd" class="inp" type="number"
+        onkeydown="if(event.key==='Enter')document.getElementById('edit-sup-min').focus()"/></div>
+      <div style="flex:1"><label class="flbl">Unidade</label><input id="edit-sup-un" class="inp"
+        onkeydown="if(event.key==='Enter')document.getElementById('edit-sup-min').focus()"/></div>
+      <div style="flex:1"><label class="flbl">Mínimo</label><input id="edit-sup-min" class="inp" type="number"
+        onkeydown="if(event.key==='Enter')saveEditSup()"/></div>
+    </div>
+    <div class="fld"><label class="flbl">Categoria</label><input id="edit-sup-cat" class="inp"
+      onkeydown="if(event.key==='Enter')saveEditSup()"/></div>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="closeModal('modal-edit-sup')">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="saveEditSup()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Resumo anual -->
+<div class="overlay" id="modal-resumo" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-title">📊 Resumo 2026</div>
+    <div id="resumo-content" style="margin-top:12px"></div>
+    <div class="modal-btns">
+      <button class="btn-p" style="width:100%" onclick="closeModal('modal-resumo')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Gráfico -->
+<div class="overlay" id="modal-grafico" style="display:none">
+  <div class="modal modal-lg">
+    <div class="modal-title">📈 Entradas × Saídas</div>
+    <div id="grafico-content" style="margin-top:12px"></div>
+    <div style="display:flex;gap:16px;margin-top:8px;justify-content:center">
+      <span style="font-family:'Cinzel',serif;font-size:9px;color:var(--verde)">■ Entradas</span>
+      <span style="font-family:'Cinzel',serif;font-size:9px;color:var(--red)">■ Saídas</span>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-p" style="width:100%" onclick="closeModal('modal-grafico')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Editar lançamento financeiro -->
+<div class="overlay" id="modal-edit-fin" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Editar lançamento</div>
+    <input type="hidden" id="edit-fin-id"/>
+    <div class="fld"><label class="flbl">Descrição</label><input id="edit-fin-desc" class="inp"
+      onkeydown="if(event.key==='Enter')document.getElementById('edit-fin-val').focus()"/></div>
+    <div class="erow">
+      <div style="flex:1"><label class="flbl">Valor</label><input id="edit-fin-val" class="inp" type="number" step="0.01"
+        onkeydown="if(event.key==='Enter')document.getElementById('edit-fin-data').focus()"/></div>
+      <div style="flex:1"><label class="flbl">Data</label><input id="edit-fin-data" class="inp" type="date"
+        onkeydown="if(event.key==='Enter')saveEditFin()"/></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-c" style="flex:1" onclick="closeModal('modal-edit-fin')">Cancelar</button>
+      <button class="btn-p" style="flex:1" onclick="saveEditFin()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<script>
+// ── SENHA ADMIN ──────────────────────────────────────────
+const ADMIN_PASS = 'bdl2024';
+let isAdmin = false;
+
+// ── DADOS (localStorage) ─────────────────────────────────
+function load(key, def){ try{ const v=localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){return def;} }
+function save(key,val){ localStorage.setItem(key,JSON.stringify(val)); }
+
+// ── TOAST ─────────────────────────────────────────────────
+function toast(msg, isErr=false){
+  const d=document.createElement('div');
+  d.className='toast'+(isErr?' err':'');
+  d.textContent=msg;
+  document.getElementById('toast-wrap').appendChild(d);
+  setTimeout(()=>d.remove(),2200);
+}
+
+// ── MODAL helpers ─────────────────────────────────────────
+function closeModal(id){ document.getElementById(id).style.display='none'; }
+function openModal(id){ document.getElementById(id).style.display='flex'; }
+
+// ── TABS ──────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('panel-'+t.dataset.tab).classList.add('active');
+    if(t.dataset.tab==='suprimentos') renderSuprimentos();
+    if(t.dataset.tab==='financas') renderFinancas();
+  });
+});
+
+// ── ADMIN ─────────────────────────────────────────────────
+function toggleAdmin(){
+  if(isAdmin){ isAdmin=false; updateAdminUI(); return; }
+  openModal('modal-login');
+  setTimeout(()=>document.getElementById('login-senha').focus(),100);
+}
+function doLogin(){
+  const v=document.getElementById('login-senha').value;
+  if(v===ADMIN_PASS){ isAdmin=true; closeModal('modal-login'); document.getElementById('login-senha').value=''; updateAdminUI(); toast('Modo admin ativado'); }
+  else { document.getElementById('login-err').style.display='block'; }
+}
+function hideLogin(){ closeModal('modal-login'); document.getElementById('login-err').style.display='none'; document.getElementById('login-senha').value=''; }
+function updateAdminUI(){
+  document.getElementById('admin-bar').style.display=isAdmin?'block':'none';
+  document.getElementById('btn-admin-toggle').textContent=isAdmin?'Sair':'Admin';
+  document.getElementById('btn-admin-toggle').classList.toggle('logout',isAdmin);
+  document.getElementById('manut-add-btn').style.display=isAdmin?'block':'none';
+  document.getElementById('sup-add-btn').style.display=isAdmin?'block':'none';
+  document.getElementById('btn-novo-pedido').style.display=isAdmin?'block':'none';
+  document.getElementById('btn-fin-lancar').style.display=isAdmin?'block':'none';
+  document.getElementById('btn-edit-encontro') && (document.getElementById('btn-edit-encontro').style.display=isAdmin?'inline-flex':'none');
+  renderManut(); renderSuprimentos(); renderFinancas();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MANUTENÇÃO
+// ═══════════════════════════════════════════════════════════
+function getManut(){ return load('manut_tasks',[]); }
+function saveManut(d){ save('manut_tasks',d); }
+
+const STATUS_NEXT = { futura:'andamento', andamento:'concluida', concluida:'futura' };
+const STATUS_ICON = { futura:'▶', andamento:'✅', concluida:'🔄' };
+const STATUS_LABEL = { andamento:'Em andamento', futura:'Futura', concluida:'Concluída' };
+
+function renderManut(){
+  renderEncontro();
+  const tasks = getManut();
+  const groups = { andamento:[], futura:[], concluida:[] };
+  tasks.forEach(t => (groups[t.status]||groups.futura).push(t));
+
+  const el = document.getElementById('manut-content');
+  let html = '';
+
+  function renderGroup(label, dotColor, items){
+    if(!items.length) return '';
+    let g = `<div class="sec-hd"><span class="sec-dot" style="background:${dotColor}"></span><span class="sec-lbl">${label}</span><span class="sec-cnt">${items.length}</span></div>`;
+    items.forEach(t => {
+      g += `<div class="card" id="mc-${t.id}">
+        <div class="card-row">
+          <div class="card-left">
+            <span class="card-emoji">${t.emoji||'🔧'}</span>
+            <div>
+              <div class="card-title">${esc(t.titulo)}</div>
+              ${t.desc?`<div class="card-desc">${esc(t.desc)}</div>`:''}
+              <div style="margin-top:5px"><span class="status-badge ${t.status}">${STATUS_LABEL[t.status]}</span></div>
+            </div>
+          </div>
+          <div class="card-acts">
+            <button class="bic-status" title="Avançar status" onclick="advanceStatus('${t.id}')">${STATUS_ICON[t.status]}</button>
+            ${isAdmin?`<button class="bic bic-e" onclick="openEditManut('${t.id}')">✏️</button><button class="bic bic-d" onclick="delManut('${t.id}')">🗑</button>`:''}
+          </div>
+        </div>
+      </div>`;
+    });
+    return g;
+  }
+
+  html += renderGroup('Em andamento','var(--gold)', groups.andamento);
+  html += renderGroup('Futuras','var(--ambar)', groups.futura);
+  html += renderGroup('Concluídas','var(--verde)', groups.concluida);
+  if(!tasks.length) html = '<div class="empty">Nenhuma tarefa registrada.</div>';
+  el.innerHTML = html;
+}
+
+function advanceStatus(id){
+  const tasks = getManut();
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  t.status = STATUS_NEXT[t.status]||'futura';
+  saveManut(tasks);
+  renderManut();
+  toast('Status atualizado');
+}
+
+function showAddManut(){
+  document.getElementById('manut-add-btn').style.display='none';
+  document.getElementById('manut-add-box').style.display='block';
+  document.getElementById('manut-new-titulo').focus();
+}
+function hideAddManut(){
+  document.getElementById('manut-add-btn').style.display=isAdmin?'block':'none';
+  document.getElementById('manut-add-box').style.display='none';
+}
+function addManutTask(){
+  const titulo = document.getElementById('manut-new-titulo').value.trim();
+  if(!titulo){ document.getElementById('manut-new-titulo').classList.add('err'); return; }
+  const tasks = getManut();
+  tasks.push({ id: Date.now().toString(), emoji: document.getElementById('manut-new-emoji').value||'🔧', titulo, desc: document.getElementById('manut-new-desc').value.trim(), status: document.getElementById('manut-new-status').value });
+  saveManut(tasks);
+  document.getElementById('manut-new-emoji').value='🔧';
+  document.getElementById('manut-new-titulo').value='';
+  document.getElementById('manut-new-desc').value='';
+  document.getElementById('manut-new-titulo').classList.remove('err');
+  hideAddManut();
+  renderManut();
+  toast('Tarefa adicionada');
+}
+function openEditManut(id){
+  const t = getManut().find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById('edit-manut-id').value=id;
+  document.getElementById('edit-manut-emoji').value=t.emoji||'🔧';
+  document.getElementById('edit-manut-titulo').value=t.titulo;
+  document.getElementById('edit-manut-desc').value=t.desc||'';
+  document.getElementById('edit-manut-status').value=t.status;
+  openModal('modal-edit-manut');
+  setTimeout(()=>document.getElementById('edit-manut-titulo').focus(),100);
+}
+function saveEditManut(){
+  const id=document.getElementById('edit-manut-id').value;
+  const tasks=getManut();
+  const t=tasks.find(x=>x.id===id); if(!t) return;
+  t.emoji=document.getElementById('edit-manut-emoji').value||'🔧';
+  t.titulo=document.getElementById('edit-manut-titulo').value.trim();
+  t.desc=document.getElementById('edit-manut-desc').value.trim();
+  t.status=document.getElementById('edit-manut-status').value;
+  saveManut(tasks); closeModal('modal-edit-manut'); renderManut(); toast('Salvo');
+}
+function delManut(id){
+  if(!confirm('Remover esta tarefa?')) return;
+  saveManut(getManut().filter(x=>x.id!==id));
+  renderManut(); toast('Removido');
+}
+
+// ── ENCONTRO ──────────────────────────────────────────────
+function getEncontro(){ return load('encontro',{estado:'pendente',data:''}); }
+function renderEncontro(){
+  const enc = getEncontro();
+  const labelMap = { pendente:'Pendente de agendamento', sem_previsao:'Sem previsão', marcado:'' };
+  let val = labelMap[enc.estado]!==undefined ? labelMap[enc.estado] : '';
+  if(enc.estado==='marcado' && enc.data){
+    const d = new Date(enc.data+'T12:00:00');
+    val = d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  }
+  document.getElementById('encontro-card-wrap').innerHTML = `
+    <div class="encontro-card ${enc.estado}" id="encontro-card">
+      <div>
+        <div class="encontro-label">🗓 Próximo encontro</div>
+        <div class="encontro-val">${val||'Sem previsão'}</div>
+      </div>
+      ${isAdmin?`<button class="bic bic-e" id="btn-edit-encontro" onclick="openEncontroModal()">✏️</button>`:''}
+    </div>`;
+}
+function openEncontroModal(){
+  const enc=getEncontro();
+  document.getElementById('enc-estado').value=enc.estado||'pendente';
+  document.getElementById('enc-data').value=enc.data||'';
+  toggleEncData();
+  openModal('modal-encontro');
+}
+function toggleEncData(){
+  const v=document.getElementById('enc-estado').value;
+  document.getElementById('enc-data-row').style.display=v==='marcado'?'block':'none';
+}
+function saveEncontro(){
+  const enc={estado:document.getElementById('enc-estado').value,data:document.getElementById('enc-data').value};
+  save('encontro',enc); closeModal('modal-encontro'); renderManut(); toast('Encontro atualizado');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SUPRIMENTOS
+// ═══════════════════════════════════════════════════════════
+function getSup(){ return load('suprimentos',[]); }
+function saveSup(d){ save('suprimentos',d); }
+function getAvulsos(){ return load('avulsos',[]); }
+function saveAvulsos(d){ save('avulsos',d); }
+
+function supNivel(item){
+  if(item.min<=0) return 'ok';
+  const r = item.qtd/item.min;
+  if(r<=0) return 'urgente';
+  if(r<1) return 'baixo';
+  return 'ok';
+}
+
+let supOkOpen=false;
+function toggleSupOk(){
+  supOkOpen=!supOkOpen;
+  document.getElementById('sup-ok-content').style.display=supOkOpen?'block':'none';
+  document.getElementById('sup-ok-arrow').textContent=supOkOpen?'▼':'▶';
+}
+
+function renderSuprimentos(){
+  const items=getSup();
+  const avulsos=getAvulsos();
+  const urgente=items.filter(x=>supNivel(x)==='urgente');
+  const baixo=items.filter(x=>supNivel(x)==='baixo');
+  const ok=items.filter(x=>supNivel(x)==='ok');
+
+  document.getElementById('sup-cnt-urgente').textContent=urgente.length;
+  document.getElementById('sup-cnt-baixo').textContent=baixo.length;
+  document.getElementById('sup-cnt-ok').textContent=ok.length;
+  document.getElementById('sup-avulso-cnt').textContent=avulsos.length;
+
+  function renderSupItem(item){
+    const nivel=supNivel(item);
+    const pct=item.min>0?Math.min(100,Math.round(item.qtd/item.min*100)):100;
+    const barColor=nivel==='urgente'?'var(--red)':nivel==='baixo'?'var(--ambar)':'#3a9a78';
+    return `<div class="sup-item ${nivel}">
+      <div class="sup-top">
+        <div style="flex:1">
+          <div class="sup-nome">${esc(item.nome)}</div>
+          <div class="sup-meta">
+            <span class="sup-cat">${esc(item.cat||'geral')}</span>
+            <span style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-dim)">${item.qtd} ${item.un||'un'} / mín ${item.min}</span>
+          </div>
+          <div class="mini-bar"><div class="mini-fill" style="width:${pct}%;background:${barColor}"></div></div>
+        </div>
+        ${isAdmin?`<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px">
+          <button class="bic bic-e" onclick="openEditSup('${item.id}')">✏️</button>
+          <button class="bic bic-d" onclick="delSup('${item.id}')">🗑</button>
+        </div>`:''}
+      </div>
+    </div>`;
+  }
+
+  const precHtml=urgente.concat(baixo).map(renderSupItem).join('');
+  document.getElementById('sup-precisamos').innerHTML=precHtml||'<div class="empty" style="margin-bottom:8px">Tudo abastecido!</div>';
+  document.getElementById('sup-ok-content').innerHTML=ok.map(renderSupItem).join('');
+  document.getElementById('sup-ok-lbl').textContent=`Em ordem — ${ok.length} ite${ok.length===1?'m':'ns'}`;
+
+  // Avulsos
+  document.getElementById('sup-avulsos').innerHTML=avulsos.length?avulsos.map(a=>`
+    <div class="avulso-item">
+      <div>
+        <div class="avulso-nome">${esc(a.nome)}</div>
+        <div class="avulso-meta">${esc(a.qtd||'')}${a.obs?' · '+esc(a.obs):''}</div>
+      </div>
+      ${isAdmin?`<button class="bic bic-d" onclick="delAvulso('${a.id}')">🗑</button>`:''}
+    </div>`).join(''):'<div class="empty">Nenhum pedido pendente</div>';
+}
+
+function addSupItem(){
+  const nome=document.getElementById('sup-new-nome').value.trim();
+  if(!nome){ document.getElementById('sup-new-nome').classList.add('err'); return; }
+  const items=getSup();
+  items.push({ id:Date.now().toString(), nome, cat:document.getElementById('sup-new-cat').value.trim()||'geral', qtd:parseFloat(document.getElementById('sup-new-qtd').value)||0, un:document.getElementById('sup-new-un').value||'un', min:parseFloat(document.getElementById('sup-new-min').value)||1 });
+  saveSup(items);
+  document.getElementById('sup-new-nome').value=''; document.getElementById('sup-new-cat').value=''; document.getElementById('sup-new-qtd').value='0'; document.getElementById('sup-new-min').value='1';
+  document.getElementById('sup-add-box').style.display='none'; document.getElementById('sup-add-btn').style.display='block';
+  renderSuprimentos(); toast('Item adicionado');
+}
+function openEditSup(id){
+  const item=getSup().find(x=>x.id===id); if(!item) return;
+  document.getElementById('edit-sup-id').value=id;
+  document.getElementById('edit-sup-nome').value=item.nome;
+  document.getElementById('edit-sup-cat').value=item.cat||'';
+  document.getElementById('edit-sup-qtd').value=item.qtd;
+  document.getElementById('edit-sup-un').value=item.un||'un';
+  document.getElementById('edit-sup-min').value=item.min;
+  openModal('modal-edit-sup');
+}
+function saveEditSup(){
+  const id=document.getElementById('edit-sup-id').value;
+  const items=getSup(); const item=items.find(x=>x.id===id); if(!item) return;
+  item.nome=document.getElementById('edit-sup-nome').value.trim();
+  item.cat=document.getElementById('edit-sup-cat').value.trim();
+  item.qtd=parseFloat(document.getElementById('edit-sup-qtd').value)||0;
+  item.un=document.getElementById('edit-sup-un').value;
+  item.min=parseFloat(document.getElementById('edit-sup-min').value)||0;
+  saveSup(items); closeModal('modal-edit-sup'); renderSuprimentos(); toast('Salvo');
+}
+function delSup(id){
+  if(!confirm('Remover item?')) return;
+  saveSup(getSup().filter(x=>x.id!==id)); renderSuprimentos(); toast('Removido');
+}
+function openAvulsoModal(){
+  document.getElementById('av-nome').value=''; document.getElementById('av-qtd').value=''; document.getElementById('av-obs').value='';
+  openModal('modal-avulso');
+  setTimeout(()=>document.getElementById('av-nome').focus(),100);
+}
+function saveAvulso(){
+  const nome=document.getElementById('av-nome').value.trim(); if(!nome){ document.getElementById('av-nome').classList.add('err'); return; }
+  const avulsos=getAvulsos();
+  avulsos.push({ id:Date.now().toString(), nome, qtd:document.getElementById('av-qtd').value.trim(), obs:document.getElementById('av-obs').value.trim() });
+  saveAvulsos(avulsos); closeModal('modal-avulso'); renderSuprimentos(); toast('Pedido registrado');
+}
+function delAvulso(id){
+  if(!confirm('Remover pedido?')) return;
+  saveAvulsos(getAvulsos().filter(x=>x.id!==id)); renderSuprimentos(); toast('Removido');
+}
+
+// ═══════════════════════════════════════════════════════════
+// FINANÇAS
+// ═══════════════════════════════════════════════════════════
+function getLancamentos(){ return load('financas',[]); }
+function saveLancamentos(d){ save('financas',d); }
+
+let finTipo='mensalidade';
+
+function setTipo(t){
+  finTipo=t;
+  ['mens','extra','saida'].forEach(k=>{ document.getElementById('tt-'+k).className='tt'; });
+  document.getElementById('tt-mens').classList.toggle('e', t==='mensalidade');
+  document.getElementById('tt-extra').classList.toggle('ex', t==='extra');
+  document.getElementById('tt-saida').classList.toggle('s', t==='saida');
+  document.getElementById('fin-conta-row').style.display=t==='saida'?'block':'none';
+  document.getElementById('fin-desc-lbl').textContent=t==='mensalidade'?'Nome (quem pagou)':t==='extra'?'Descrição':'Descrição';
+  if(t!=='saida') document.getElementById('fin-conta').value='';
+}
+function onContaChange(){
+  const v=document.getElementById('fin-conta').value;
+  if(v && v!=='Outro') document.getElementById('fin-desc').value=v;
+  else document.getElementById('fin-desc').value='';
+}
+
+function toggleFinForm(){
+  const f=document.getElementById('fin-form');
+  const visible=f.style.display!=='none';
+  f.style.display=visible?'none':'block';
+  if(!visible){ setTipo('mensalidade'); document.getElementById('fin-desc').value=''; document.getElementById('fin-val').value=''; const today=new Date().toISOString().split('T')[0]; document.getElementById('fin-data').value=today; document.getElementById('fin-desc').focus(); }
+}
+
+function lancar(){
+  const desc=document.getElementById('fin-desc').value.trim();
+  const val=parseFloat(document.getElementById('fin-val').value);
+  const data=document.getElementById('fin-data').value;
+  if(!desc||!val||!data){ toast('Preencha todos os campos',true); return; }
+  const lancs=getLancamentos();
+  lancs.push({ id:Date.now().toString(), tipo:finTipo, desc, val, data, conta: finTipo==='saida'?document.getElementById('fin-conta').value:'' });
+  saveLancamentos(lancs);
+  document.getElementById('fin-form').style.display='none';
+  renderFinancas(); toast('Lançamento registrado');
+}
+
+function renderFinancas(){
+  // populate month selector
+  const sel=document.getElementById('sel-mes');
+  const lancs=getLancamentos();
+  const meses=new Set(lancs.map(l=>l.data.slice(0,7)));
+  const now=new Date();
+  const curMes=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  meses.add(curMes);
+  const sorted=[...meses].sort().reverse();
+  const prevVal=sel.value||curMes;
+  sel.innerHTML=sorted.map(m=>{
+    const [y,mo]=m.split('-');
+    const nome=new Date(+y,+mo-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+    return `<option value="${m}" ${m===prevVal?'selected':''}>${nome}</option>`;
+  }).join('');
+  const mes=sel.value||curMes;
+  const filtered=lancs.filter(l=>l.data.startsWith(mes));
+
+  // totais
+  const totalE=filtered.filter(l=>l.tipo==='mensalidade'||l.tipo==='extra').reduce((a,l)=>a+l.val,0);
+  const totalS=filtered.filter(l=>l.tipo==='saida').reduce((a,l)=>a+l.val,0);
+  const saldo=totalE-totalS;
+
+  document.getElementById('fin-te').textContent=fmt(totalE);
+  document.getElementById('fin-ts').textContent=fmt(totalS);
+  const slEl=document.getElementById('fin-sl');
+  slEl.textContent=fmt(Math.abs(saldo));
+  slEl.style.color=saldo>=0?'var(--verde)':'var(--red)';
+
+  // mae de santo
+  const maeBox=document.getElementById('mae-box');
+  if(saldo<0){ maeBox.style.display='flex'; document.getElementById('mae-val').textContent=fmt(Math.abs(saldo)); }
+  else { maeBox.style.display='none'; }
+
+  // render list
+  const mens=filtered.filter(l=>l.tipo==='mensalidade');
+  const extras=filtered.filter(l=>l.tipo==='extra');
+  const saidas=filtered.filter(l=>l.tipo==='saida');
+  let html='';
+
+  // MENSALIDADES: agrupadas em uma linha
+  if(mens.length){
+    const totalMens=mens.reduce((a,l)=>a+l.val,0);
+    html+=`<div class="ti-group-header">Mensalidades <span style="font-family:'Playfair Display',serif;font-size:13px;color:var(--verde)">${fmt(totalMens)}</span></div>`;
+    html+=`<div class="ti">
+      <div class="ti-left">
+        <div class="ti-desc">Mensalidades (${mens.length})</div>
+        <div class="ti-sub">${mens.map(m=>esc(m.desc)).join(', ')}</div>
+      </div>
+      <div class="ti-val e">${fmt(totalMens)}</div>
+    </div>`;
+  }
+
+  // EXTRAS: individuais
+  if(extras.length){
+    html+=`<div class="ti-group-header">Extras</div>`;
+    extras.sort((a,b)=>b.data.localeCompare(a.data)).forEach(l=>{
+      html+=`<div class="ti">
+        <div class="ti-left">
+          <div class="ti-desc">${esc(l.desc)}</div>
+          <div class="ti-sub">${fmtData(l.data)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="ti-val e">${fmt(l.val)}</div>
+          ${isAdmin?`<button class="bic bic-e" onclick="openEditFin('${l.id}')">✏️</button><button class="bic bic-d" onclick="delFin('${l.id}')">🗑</button>`:''}
+        </div>
+      </div>`;
+    });
+  }
+
+  // SAÍDAS: individuais
+  if(saidas.length){
+    html+=`<div class="ti-group-header">Saídas</div>`;
+    saidas.sort((a,b)=>b.data.localeCompare(a.data)).forEach(l=>{
+      html+=`<div class="ti">
+        <div class="ti-left">
+          <div class="ti-desc">${esc(l.desc)}</div>
+          <div class="ti-sub">${fmtData(l.data)}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="ti-val s">−${fmt(l.val)}</div>
+          ${isAdmin?`<button class="bic bic-e" onclick="openEditFin('${l.id}')">✏️</button><button class="bic bic-d" onclick="delFin('${l.id}')">🗑</button>`:''}
+        </div>
+      </div>`;
+    });
+  }
+
+  if(!filtered.length) html='<div class="empty">Nenhum lançamento neste mês.</div>';
+  document.getElementById('financas-content').innerHTML=html;
+}
+
+function openEditFin(id){
+  const l=getLancamentos().find(x=>x.id===id); if(!l) return;
+  document.getElementById('edit-fin-id').value=id;
+  document.getElementById('edit-fin-desc').value=l.desc;
+  document.getElementById('edit-fin-val').value=l.val;
+  document.getElementById('edit-fin-data').value=l.data;
+  openModal('modal-edit-fin');
+  setTimeout(()=>document.getElementById('edit-fin-desc').focus(),100);
+}
+function saveEditFin(){
+  const id=document.getElementById('edit-fin-id').value;
+  const lancs=getLancamentos(); const l=lancs.find(x=>x.id===id); if(!l) return;
+  l.desc=document.getElementById('edit-fin-desc').value.trim();
+  l.val=parseFloat(document.getElementById('edit-fin-val').value)||0;
+  l.data=document.getElementById('edit-fin-data').value;
+  saveLancamentos(lancs); closeModal('modal-edit-fin'); renderFinancas(); toast('Salvo');
+}
+function delFin(id){
+  if(!confirm('Remover lançamento?')) return;
+  saveLancamentos(getLancamentos().filter(x=>x.id!==id)); renderFinancas(); toast('Removido');
+}
+
+// ── RESUMO ANUAL ──────────────────────────────────────────
+function openResumoAnual(){
+  const lancs=getLancamentos().filter(l=>l.data.startsWith('2026'));
+  const meses={};
+  lancs.forEach(l=>{
+    const m=l.data.slice(0,7);
+    if(!meses[m]) meses[m]={e:0,s:0};
+    if(l.tipo==='saida') meses[m].s+=l.val;
+    else meses[m].e+=l.val;
+  });
+  const sorted=Object.keys(meses).sort();
+  let html='';
+  if(!sorted.length){ html='<div class="empty">Nenhum lançamento em 2026.</div>'; }
+  else {
+    let totE=0,totS=0;
+    sorted.forEach(m=>{
+      const {e,s}=meses[m];
+      totE+=e; totS+=s;
+      const saldo=e-s;
+      const [y,mo]=m.split('-');
+      const nome=new Date(+y,+mo-1,1).toLocaleDateString('pt-BR',{month:'short'});
+      html+=`<div class="resumo-mes">
+        <div class="resumo-mes-nome">${nome}</div>
+        <div class="resumo-mes-vals">
+          <span style="color:var(--verde)">${fmt(e)}</span>
+          <span style="color:var(--red)">−${fmt(s)}</span>
+          <span style="color:${saldo>=0?'var(--verde)':'var(--red)'}; font-weight:600">${saldo>=0?'':'-'}${fmt(Math.abs(saldo))}</span>
+        </div>
+      </div>`;
+    });
+    html+=`<div style="display:flex;justify-content:space-between;margin-top:10px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.08em;padding:10px 14px;background:var(--gold-dim);border-radius:8px">
+      <span>TOTAL 2026</span>
+      <span style="color:${totE-totS>=0?'var(--verde)':'var(--red)'};font-weight:700">${fmt(totE)} → Saldo ${fmt(totE-totS)}</span>
+    </div>`;
+  }
+  document.getElementById('resumo-content').innerHTML=html;
+  openModal('modal-resumo');
+}
+
+// ── GRÁFICO ───────────────────────────────────────────────
+function openGrafico(){
+  const lancs=getLancamentos();
+  const meses={};
+  lancs.forEach(l=>{
+    const m=l.data.slice(0,7);
+    if(!meses[m]) meses[m]={e:0,s:0};
+    if(l.tipo==='saida') meses[m].s+=l.val;
+    else meses[m].e+=l.val;
+  });
+  const sorted=Object.keys(meses).sort().slice(-6);
+  if(!sorted.length){ document.getElementById('grafico-content').innerHTML='<div class="empty">Sem dados</div>'; openModal('modal-grafico'); return; }
+  const maxVal=Math.max(...sorted.flatMap(m=>[meses[m].e,meses[m].s]),1);
+
+  let html=`<div class="chart-bar-wrap">`;
+  sorted.forEach(m=>{
+    const {e,s}=meses[m];
+    const he=Math.round(e/maxVal*110);
+    const hs=Math.round(s/maxVal*110);
+    const [y,mo]=m.split('-');
+    const nome=new Date(+y,+mo-1,1).toLocaleDateString('pt-BR',{month:'short'});
+    html+=`<div class="chart-bar-col">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;width:100%;gap:2px">
+        <div class="chart-bar-e" style="height:${he}px"></div>
+        <div class="chart-bar-s" style="height:${hs}px"></div>
+      </div>
+      <div class="chart-lbl">${nome}</div>
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('grafico-content').innerHTML=html;
+  openModal('modal-grafico');
+}
+
+// ── UTILS ─────────────────────────────────────────────────
+function esc(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+function fmt(v){ return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtData(s){ if(!s) return ''; const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`; }
+
+// ── INIT ──────────────────────────────────────────────────
+document.getElementById('footer-date').textContent=new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+renderManut();
+// Pre-populate with sample data if empty
+if(!getSup().length){
+  saveSup([
+    {id:'1',nome:'Velas brancas',cat:'ritual',qtd:5,un:'cx',min:3},
+    {id:'2',nome:'Incenso',cat:'ritual',qtd:0,un:'cx',min:2},
+    {id:'3',nome:'Álcool',cat:'limpeza',qtd:1,un:'L',min:2},
+    {id:'4',nome:'Papel toalha',cat:'limpeza',qtd:4,un:'rl',min:3},
+  ]);
+  renderSuprimentos();
+}
+</script>
+</body>
+</html>
