@@ -340,7 +340,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
 </div>
 
-<footer class="footer">Bolhas de Luz · <span id="footer-date"></span></footer>
+<footer class="footer">Bolhas de Luz · <span id="footer-date"></span><br><button onclick="showDiag()" style="margin-top:8px;background:none;border:none;cursor:pointer;font-family:Cinzel,serif;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);text-decoration:underline">🔍 Diagnóstico de dados</button></footer>
 
 <!-- MODAL: Login -->
 <div class="overlay" id="modal-login" style="display:none">
@@ -1075,19 +1075,47 @@ function esc(s){ const d=document.createElement('div'); d.textContent=s||''; ret
 function fmt(v){ return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtData(s){ if(!s) return ''; const [y,m,d]=s.split('-'); return `${d}/${m}/${y}`; }
 
+// ── MIGRAÇÃO DE CHAVES ANTIGAS ────────────────────────────
+const KEY_MAP = {
+  manut_tasks:  ['manut_tasks','tasks','manutencao','manut','bdl_tasks','terreiro_tasks','obras'],
+  suprimentos:  ['suprimentos','estoque','stock','items','bdl_sup','bdl_estoque','terreiro_estoque'],
+  avulsos:      ['avulsos','pedidos','bdl_avulsos','terreiro_avulsos'],
+  financas:     ['financas','lancamentos','transacoes','registros','bdl_fin','terreiro_fin','financeiro'],
+  encontro:     ['encontro','proximo_encontro','bdl_encontro','terreiro_encontro'],
+};
+
+function migrate(){
+  let migrated=[];
+  Object.entries(KEY_MAP).forEach(([canonical, aliases])=>{
+    if(localStorage.getItem(canonical)) return; // já existe com a chave correta
+    for(const alias of aliases){
+      if(alias===canonical) continue;
+      const raw=localStorage.getItem(alias);
+      if(raw){
+        localStorage.setItem(canonical, raw);
+        migrated.push(`${alias} → ${canonical}`);
+        break;
+      }
+    }
+  });
+  if(migrated.length) toast('Dados importados: '+migrated.join(', '));
+}
+
+// ── DIAGNÓSTICO ───────────────────────────────────────────
+function showDiag(){
+  const keys=Object.keys(localStorage);
+  if(!keys.length){ alert('localStorage vazio — nenhum dado encontrado.'); return; }
+  const lines=keys.map(k=>{
+    let val=''; try{ const p=JSON.parse(localStorage.getItem(k)); val=Array.isArray(p)?`[${p.length} itens]`:typeof p==='object'?JSON.stringify(p).slice(0,60):String(p); }catch(e){val=String(localStorage.getItem(k)).slice(0,60);}
+    return `• ${k}: ${val}`;
+  });
+  alert('Chaves encontradas no localStorage:\n\n'+lines.join('\n')+'\n\nTotal: '+keys.length+' chaves');
+}
+
 // ── INIT ──────────────────────────────────────────────────
 document.getElementById('footer-date').textContent=new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+migrate();
 renderManut();
-// Pre-populate with sample data if empty
-if(!getSup().length){
-  saveSup([
-    {id:'1',nome:'Velas brancas',cat:'ritual',qtd:5,un:'cx',min:3},
-    {id:'2',nome:'Incenso',cat:'ritual',qtd:0,un:'cx',min:2},
-    {id:'3',nome:'Álcool',cat:'limpeza',qtd:1,un:'L',min:2},
-    {id:'4',nome:'Papel toalha',cat:'limpeza',qtd:4,un:'rl',min:3},
-  ]);
-  renderSuprimentos();
-}
 </script>
 </body>
 </html>
