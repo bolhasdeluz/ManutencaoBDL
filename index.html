@@ -161,6 +161,29 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .ti-mens-row span:first-child{color:var(--text-dim)}
 .ti-mens-row span:last-child{font-weight:600;color:var(--verde-txt)}
 
+
+/* qtd adjust */
+.qtd-row{display:flex;align-items:center;gap:6px;margin-top:6px}
+.btn-qtd{width:28px;height:28px;border:1px solid var(--border);border-radius:7px;background:var(--surface);cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;line-height:1}
+.btn-qtd.minus:hover{background:#fdf0ee;border-color:rgba(184,64,64,.3);color:var(--red)}
+.btn-qtd.plus:hover{background:var(--verde-claro);border-color:rgba(45,106,79,.3);color:var(--verde)}
+.qtd-display{font-family:'Cinzel',serif;font-size:13px;font-weight:600;min-width:54px;text-align:center;color:var(--text)}
+/* comentários */
+.comentarios-wrap{margin-top:8px;border-top:1px solid var(--border);padding-top:8px}
+.comentario-item{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid rgba(196,57,107,.05)}
+.comentario-item:last-child{border-bottom:none}
+.comentario-txt{font-family:'Crimson Pro',serif;font-size:13px;color:var(--text);flex:1}
+.comentario-meta{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.06em;color:var(--text-dim);white-space:nowrap;margin-top:2px}
+.comentario-del{background:none;border:none;cursor:pointer;font-size:11px;opacity:.4;padding:0;flex-shrink:0}
+.comentario-del:hover{opacity:1}
+.add-comentario{display:flex;gap:6px;margin-top:8px}
+.add-comentario-inp{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);background:transparent;outline:none}
+.add-comentario-inp:focus{border-color:var(--gold)}
+.add-comentario-btn{padding:7px 12px;border:none;border-radius:6px;background:var(--gold-dim);color:var(--gold);cursor:pointer;font-size:13px;font-weight:700;transition:background .15s}
+.add-comentario-btn:hover{background:rgba(196,57,107,.15)}
+.toggle-coments{background:none;border:none;cursor:pointer;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);padding:4px 0;display:flex;align-items:center;gap:4px;margin-top:4px}
+.toggle-coments:hover{color:var(--gold)}
+
 .footer{text-align:center;padding:20px 16px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);border-top:1px solid var(--border);max-width:680px;margin:0 auto}
 .load{font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-dim);text-align:center;padding:24px 0;font-size:14px}
 @media(max-width:480px){.h-title{font-size:20px}.stats-row{gap:8px}.stat-n{font-size:22px}}
@@ -216,7 +239,7 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
         </div>
       </div>
     </div>
-    <button id="manut-add-btn" class="add-box btn-add-f" style="display:none" onclick="showAddManut()">+ Adicionar tarefa</button>
+    <button id="manut-add-btn" class="add-box btn-add-f" style="display:block" onclick="showAddManut()">+ Adicionar tarefa</button>
   </div>
 
   <!-- SUPRIMENTOS -->
@@ -640,7 +663,7 @@ function updateAdminUI(){
   document.getElementById('admin-bar').style.display=isAdmin?'block':'none';
   document.getElementById('btn-admin-toggle').textContent=isAdmin?'Sair':'Admin';
   document.getElementById('btn-admin-toggle').classList.toggle('logout',isAdmin);
-  document.getElementById('manut-add-btn').style.display=isAdmin?'block':'none';
+  document.getElementById('manut-add-btn').style.display='block'; // sempre visível
   document.getElementById('sup-add-btn').style.display=isAdmin?'block':'none';
   document.getElementById('btn-novo-pedido').style.display=isAdmin?'block':'none';
   document.getElementById('btn-fin-lancar').style.display=isAdmin?'block':'none';
@@ -671,6 +694,8 @@ function renderManut(){
     if(!items.length) return '';
     let g = `<div class="sec-hd"><span class="sec-dot" style="background:${dotColor}"></span><span class="sec-lbl">${label}</span><span class="sec-cnt">${items.length}</span></div>`;
     items.forEach(t => {
+      const coments = t.comentarios||[];
+      const comLabel = coments.length ? `💬 ${coments.length}` : '+ comentário';
       g += `<div class="card" id="mc-${t.id}">
         <div class="card-row">
           <div class="card-left">
@@ -684,6 +709,26 @@ function renderManut(){
           <div class="card-acts">
             <button class="bic-status" title="Avançar status" onclick="advanceStatus('${t.id}')">${STATUS_ICON[t.status]}</button>
             ${isAdmin?`<button class="bic bic-e" onclick="openEditManut('${t.id}')">✏️</button><button class="bic bic-d" onclick="delManut('${t.id}')">🗑</button>`:''}
+          </div>
+        </div>
+        <button class="toggle-coments" onclick="toggleComents('${t.id}')">
+          <span id="coments-arrow-${t.id}">▶</span> ${comLabel}
+        </button>
+        <div id="coments-wrap-${t.id}" style="display:none">
+          <div class="comentarios-wrap">
+            ${coments.length ? coments.map((c,ci)=>`
+              <div class="comentario-item">
+                <div style="flex:1">
+                  <div class="comentario-txt">${esc(c.txt)}</div>
+                  <div class="comentario-meta">${c.data||''}</div>
+                </div>
+                <button class="comentario-del" onclick="delComent('${t.id}',${ci})" title="Remover">✕</button>
+              </div>`).join('') : '<div class="empty" style="font-size:12px">Nenhum comentário ainda.</div>'}
+          </div>
+          <div class="add-comentario">
+            <input class="add-comentario-inp" id="cinp-${t.id}" placeholder="Escreva um comentário…"
+              onkeydown="if(event.key==='Enter')addComent('${t.id}')"/>
+            <button class="add-comentario-btn" onclick="addComent('${t.id}')">↵</button>
           </div>
         </div>
       </div>`;
@@ -708,13 +753,48 @@ function advanceStatus(id){
   toast('Status atualizado');
 }
 
+function toggleComents(id){
+  const wrap=document.getElementById('coments-wrap-'+id);
+  const arrow=document.getElementById('coments-arrow-'+id);
+  const open=wrap.style.display==='none';
+  wrap.style.display=open?'block':'none';
+  arrow.textContent=open?'▼':'▶';
+  if(open) setTimeout(()=>{ const inp=document.getElementById('cinp-'+id); if(inp) inp.focus(); },50);
+}
+function addComent(taskId){
+  const inp=document.getElementById('cinp-'+taskId);
+  const txt=inp&&inp.value.trim(); if(!txt) return;
+  const tasks=getManut();
+  const t=tasks.find(x=>x.id===taskId); if(!t) return;
+  if(!t.comentarios) t.comentarios=[];
+  const now=new Date();
+  const data=now.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  t.comentarios.push({txt,data});
+  saveManut(tasks);
+  inp.value='';
+  renderManut();
+  // reopen the comment section
+  setTimeout(()=>{
+    const wrap=document.getElementById('coments-wrap-'+taskId);
+    const arrow=document.getElementById('coments-arrow-'+taskId);
+    if(wrap){ wrap.style.display='block'; arrow.textContent='▼'; }
+    const ni=document.getElementById('cinp-'+taskId); if(ni) ni.focus();
+  },30);
+}
+function delComent(taskId, idx){
+  const tasks=getManut();
+  const t=tasks.find(x=>x.id===taskId); if(!t||!t.comentarios) return;
+  t.comentarios.splice(idx,1);
+  saveManut(tasks); renderManut();
+}
+
 function showAddManut(){
   document.getElementById('manut-add-btn').style.display='none';
   document.getElementById('manut-add-box').style.display='block';
   document.getElementById('manut-new-titulo').focus();
 }
 function hideAddManut(){
-  document.getElementById('manut-add-btn').style.display=isAdmin?'block':'none';
+  document.getElementById('manut-add-btn').style.display='block'; // sempre visível
   document.getElementById('manut-add-box').style.display='none';
 }
 function addManutTask(){
@@ -838,11 +918,16 @@ function renderSuprimentos(){
           <div class="sup-nome">${esc(item.nome)}</div>
           <div class="sup-meta">
             <span class="sup-cat">${esc(item.cat||'geral')}</span>
-            <span style="font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-dim)">${item.qtd} ${item.un||'un'} / mín ${item.min}</span>
           </div>
-          <div class="mini-bar"><div class="mini-fill" style="width:${pct}%;background:${barColor}"></div></div>
+          <div class="qtd-row">
+            <button class="btn-qtd minus" onclick="adjustQtd('${item.id}',-1)" title="−1">−</button>
+            <span class="qtd-display">${item.qtd} <span style="font-size:10px;color:var(--text-dim)">${item.un||'un'}</span></span>
+            <button class="btn-qtd plus" onclick="adjustQtd('${item.id}',1)" title="+1">+</button>
+            <span style="font-family:'Cinzel',serif;font-size:9px;color:var(--text-dim);margin-left:4px">mín ${item.min}</span>
+          </div>
+          <div class="mini-bar" style="margin-top:6px"><div class="mini-fill" style="width:${pct}%;background:${barColor}"></div></div>
         </div>
-        ${isAdmin?`<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px">
+        ${isAdmin?`<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px;align-self:flex-start">
           <button class="bic bic-e" onclick="openEditSup('${item.id}')">✏️</button>
           <button class="bic bic-d" onclick="delSup('${item.id}')">🗑</button>
         </div>`:''}
@@ -900,6 +985,13 @@ function delSup(id){
   if(!confirm('Remover item?')) return;
   saveSup(getSup().filter(x=>x.id!==id)); renderSuprimentos(); toast('Removido');
 }
+function adjustQtd(id, delta){
+  const items=getSup();
+  const item=items.find(x=>x.id===id); if(!item) return;
+  item.qtd=Math.max(0, (item.qtd||0)+delta);
+  saveSup(items); renderSuprimentos();
+}
+
 function openAvulsoModal(){
   document.getElementById('av-nome').value=''; document.getElementById('av-qtd').value=''; document.getElementById('av-obs').value='';
   openModal('modal-avulso');
