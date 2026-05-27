@@ -101,15 +101,15 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .status-badge.futura{background:var(--ambar-claro);color:var(--ambar-txt)}
 .status-badge.concluida{background:var(--verde-claro);color:var(--verde-txt)}
 /* suprimentos */
-.sup-item{background:var(--surface);border-radius:var(--radius);padding:14px 15px;margin-bottom:8px;box-shadow:var(--shadow);border:1px solid var(--border);animation:fadeIn .3s ease both}
+.sup-item{background:var(--surface);border-radius:8px;padding:8px 10px;margin-bottom:5px;box-shadow:var(--shadow);border:1px solid var(--border);animation:fadeIn .3s ease both}
 .sup-item.urgente{border-left:3px solid var(--red)}
 .sup-item.baixo{border-left:3px solid var(--ambar)}
 .sup-item.ok{border-left:3px solid #3a9a78}
 .sup-top{display:flex;align-items:center;gap:10px}
-.sup-nome{font-family:'Playfair Display',serif;font-size:15px;font-weight:600}
+.sup-nome{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.2}
 .sup-meta{display:flex;gap:8px;align-items:center;margin-top:3px;flex-wrap:wrap}
-.sup-cat{font-family:'Cinzel',serif;font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);background:var(--gold-dim);padding:2px 7px;border-radius:20px}
-.mini-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:8px}
+.sup-cat{font-family:'Cinzel',serif;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);background:var(--gold-dim);padding:1px 5px;border-radius:20px}
+.mini-bar{height:3px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:5px}
 .mini-fill{height:100%;border-radius:4px;transition:width .3s ease}
 .collapse-btn{background:none;border:none;cursor:pointer;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);padding:8px 0;width:100%;text-align:left;display:flex;align-items:center;gap:6px}
 /* avulso */
@@ -163,11 +163,11 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 
 
 /* qtd adjust */
-.qtd-row{display:flex;align-items:center;gap:6px;margin-top:6px}
-.btn-qtd{width:28px;height:28px;border:1px solid var(--border);border-radius:7px;background:var(--surface);cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;line-height:1}
+.qtd-row{display:flex;align-items:center;gap:5px;margin-top:4px}
+.btn-qtd{width:24px;height:24px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;line-height:1}
 .btn-qtd.minus:hover{background:#fdf0ee;border-color:rgba(184,64,64,.3);color:var(--red)}
 .btn-qtd.plus:hover{background:var(--verde-claro);border-color:rgba(45,106,79,.3);color:var(--verde)}
-.qtd-display{font-family:'Cinzel',serif;font-size:13px;font-weight:600;min-width:54px;text-align:center;color:var(--text)}
+.qtd-display{font-family:'Cinzel',serif;font-size:12px;font-weight:600;min-width:46px;text-align:center;color:var(--text)}
 /* comentários */
 .comentarios-wrap{margin-top:8px;border-top:1px solid var(--border);padding-top:8px}
 .comentario-item{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:1px solid rgba(196,57,107,.05)}
@@ -260,10 +260,10 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
     </div>
     <div id="sup-precisamos"></div>
     <button class="collapse-btn" onclick="toggleSupOk()">
-      <span id="sup-ok-arrow">▶</span>
+      <span id="sup-ok-arrow">▼</span>
       <span id="sup-ok-lbl">Em ordem — ver todos</span>
     </button>
-    <div id="sup-ok-content" style="display:none"></div>
+    <div id="sup-ok-content" style="display:block"></div>
     <div style="margin-top:20px">
       <div class="sec-hd">
         <span class="sec-dot" style="background:var(--gold)"></span>
@@ -889,7 +889,7 @@ function supNivel(item){
   return 'ok';
 }
 
-let supOkOpen=false;
+let supOkOpen=true;
 function toggleSupOk(){
   supOkOpen=!supOkOpen;
   document.getElementById('sup-ok-content').style.display=supOkOpen?'block':'none';
@@ -913,23 +913,23 @@ function renderSuprimentos(){
     const pct=item.min>0?Math.min(100,Math.round(item.qtd/item.min*100)):100;
     const barColor=nivel==='urgente'?'var(--red)':nivel==='baixo'?'var(--ambar)':'#3a9a78';
     return `<div class="sup-item ${nivel}">
-      <div class="sup-top">
-        <div style="flex:1">
-          <div class="sup-nome">${esc(item.nome)}</div>
-          <div class="sup-meta">
+      <div class="sup-top" style="align-items:center">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="sup-nome">${esc(item.nome)}</span>
             <span class="sup-cat">${esc(item.cat||'geral')}</span>
           </div>
           <div class="qtd-row">
-            <button class="btn-qtd minus" onclick="adjustQtd('${item.id}',-1)" title="−1">−</button>
-            <span class="qtd-display">${item.qtd} <span style="font-size:10px;color:var(--text-dim)">${item.un||'un'}</span></span>
-            <button class="btn-qtd plus" onclick="adjustQtd('${item.id}',1)" title="+1">+</button>
-            <span style="font-family:'Cinzel',serif;font-size:9px;color:var(--text-dim);margin-left:4px">mín ${item.min}</span>
+            <button class="btn-qtd minus" onclick="adjustQtd('${item.id}',-1)">−</button>
+            <span class="qtd-display">${item.qtd}<span style="font-size:9px;color:var(--text-dim);margin-left:2px">${item.un||'un'}</span></span>
+            <button class="btn-qtd plus" onclick="adjustQtd('${item.id}',1)">+</button>
+            <div class="mini-bar" style="flex:1;margin:0"><div class="mini-fill" style="width:${pct}%;background:${barColor}"></div></div>
+            <span style="font-family:'Cinzel',serif;font-size:8px;color:var(--text-dim);white-space:nowrap">mín ${item.min}</span>
           </div>
-          <div class="mini-bar" style="margin-top:6px"><div class="mini-fill" style="width:${pct}%;background:${barColor}"></div></div>
         </div>
-        ${isAdmin?`<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px;align-self:flex-start">
-          <button class="bic bic-e" onclick="openEditSup('${item.id}')">✏️</button>
-          <button class="bic bic-d" onclick="delSup('${item.id}')">🗑</button>
+        ${isAdmin?`<div style="display:flex;gap:3px;flex-shrink:0;margin-left:6px">
+          <button class="bic bic-e" style="padding:3px 6px;font-size:12px" onclick="openEditSup('${item.id}')">✏️</button>
+          <button class="bic bic-d" style="padding:3px 6px;font-size:12px" onclick="delSup('${item.id}')">🗑</button>
         </div>`:''}
       </div>
     </div>`;
