@@ -105,11 +105,13 @@ body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min
 .sup-item.urgente{border-left:3px solid var(--red)}
 .sup-item.baixo{border-left:3px solid var(--ambar)}
 .sup-item.ok{border-left:3px solid #3a9a78}
+.sup-item.prioridade{border:2px solid var(--mae);box-shadow:0 0 0 2px var(--mae-dim),var(--shadow);background:var(--mae-claro)}
+.prior-check{width:16px;height:16px;accent-color:var(--mae);cursor:pointer;flex-shrink:0}
 .sup-top{display:flex;align-items:center;gap:10px}
 .sup-nome{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.2}
 .sup-meta{display:flex;gap:8px;align-items:center;margin-top:3px;flex-wrap:wrap}
 .sup-cat{font-family:'Cinzel',serif;font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);background:var(--gold-dim);padding:1px 5px;border-radius:20px}
-.mini-bar{height:3px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:5px}
+.mini-bar{display:none}
 .mini-fill{height:100%;border-radius:4px;transition:width .3s ease}
 .collapse-btn{background:none;border:none;cursor:pointer;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);padding:8px 0;width:100%;text-align:left;display:flex;align-items:center;gap:6px}
 /* avulso */
@@ -912,18 +914,21 @@ function renderSuprimentos(){
     const nivel=supNivel(item);
     const pct=item.min>0?Math.min(100,Math.round(item.qtd/item.min*100)):100;
     const barColor=nivel==='urgente'?'var(--red)':nivel==='baixo'?'var(--ambar)':'#3a9a78';
-    return `<div class="sup-item ${nivel}">
+    const priorClass = item.prioridade ? ' prioridade' : '';
+    return `<div class="sup-item ${nivel}${priorClass}">
       <div class="sup-top" style="align-items:center">
+        ${isAdmin?`<input type="checkbox" class="prior-check" title="Prioridade de compra"
+          ${item.prioridade?'checked':''} onchange="togglePrioridade('${item.id}',this.checked)"/>`:''}
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             <span class="sup-nome">${esc(item.nome)}</span>
             <span class="sup-cat">${esc(item.cat||'geral')}</span>
+            ${item.prioridade?`<span style="font-family:'Cinzel',serif;font-size:8px;color:var(--mae);letter-spacing:.06em">★ prioridade</span>`:''}
           </div>
           <div class="qtd-row">
             <button class="btn-qtd minus" onclick="adjustQtd('${item.id}',-1)">−</button>
             <span class="qtd-display">${item.qtd}<span style="font-size:9px;color:var(--text-dim);margin-left:2px">${item.un||'un'}</span></span>
             <button class="btn-qtd plus" onclick="adjustQtd('${item.id}',1)">+</button>
-            <div class="mini-bar" style="flex:1;margin:0"><div class="mini-fill" style="width:${pct}%;background:${barColor}"></div></div>
             <span style="font-family:'Cinzel',serif;font-size:8px;color:var(--text-dim);white-space:nowrap">mín ${item.min}</span>
           </div>
         </div>
@@ -989,6 +994,13 @@ function adjustQtd(id, delta){
   const items=getSup();
   const item=items.find(x=>x.id===id); if(!item) return;
   item.qtd=Math.max(0, (item.qtd||0)+delta);
+  saveSup(items); renderSuprimentos();
+}
+
+function togglePrioridade(id, checked){
+  const items=getSup();
+  const item=items.find(x=>x.id===id); if(!item) return;
+  item.prioridade=checked;
   saveSup(items); renderSuprimentos();
 }
 
